@@ -1,0 +1,9 @@
+doctrine_mongodb:
+    connections:
+        default:
+            server: mongodb://jerome:jerome@192.168.11.6:27017/imagana
+            options: {}
+    default_database: imagana
+    document_managers:
+        default:
+            auto_mapping: true

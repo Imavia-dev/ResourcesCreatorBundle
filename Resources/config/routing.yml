@@ -1,0 +1,4 @@
+imagana_resources_creator_levels:
+    resource: "@ImaganaResourcesCreatorBundle/Controller/LevelsController.php"
+    type:     annotation
+    prefix:   /

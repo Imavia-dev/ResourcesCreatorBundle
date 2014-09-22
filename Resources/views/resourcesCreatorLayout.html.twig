@@ -1,0 +1,44 @@
+{% extends "ClarolineCoreBundle:Administration:layout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{
+    macros.breadcrumbs([
+    {
+    'icon': 'fa fa-cog',
+    'name': 'administration'|trans({}, 'platform'),
+    'href': path('claro_admin_index')
+    },
+    {
+    'name': 'Creation de ressources Imagana',
+    'href': '#'
+    }
+    ])
+    }}
+{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_SUPERMANAGER') %}
+        {% block resourcesCreatorContent %}
+
+        {% endblock %}
+    {% elseif is_granted('IS_AUTHENTICATED_ANONYMOUSLY') %}
+        <div class="panel panel-default">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="alert alert-danger margin-top-md">
+                        <i class="icon fa fa-exclamation-triangle"></i> Vous ne possèdez pas les droits nécéssaires pour accèder à cet outil !
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

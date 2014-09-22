@@ -1,0 +1,7 @@
+#services:
+ # imagana.listener.ResourcesCreatorListener:
+  #  class: Imagana\ResourcesCreatorBundle\Listener\ResourcesCreatorListener
+   # calls:
+    #  - [setContainer, ["@service_container"]]
+    #tags:
+     #  - { name: kernel.event_listener, event: open_tool_workspace_ImaganaResourcesCreator, method: onWorkspaceOpen }
