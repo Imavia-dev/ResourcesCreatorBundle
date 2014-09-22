@@ -1,0 +1,21 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block resourcesCreatorContent %}
+    {{ form_start(form, {'action': route, 'method': 'POST' , 'attr': {'id': 'formCategoryManaging'} }) }}
+    {{ form_widget(form) }}
+    {{ form_errors(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#submitForm').click(function () {
+            $("form[id=formCategoryManaging]").submit();
+        });
+    </script>
+{% endblock %}

@@ -34,6 +34,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Imagana\ResourcesCreatorBundle\FormModel\imaganaCategoryModel;
+use Imagana\ResourcesCreatorBundle\Form\imaganaCategoryType;
+
 /*
  * Class MainController
  * @package Imagana\ResourcesCreatorBundle\Controller
@@ -42,7 +45,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 /**
  * @Route("admin/open/ImaganaResourcesCreator")
  */
-class LevelsController extends Controller {
+class CategoriesController extends Controller {
 
     private $usermanager;
     private $objectManager;
@@ -78,21 +81,21 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveaux/{page}",
-     *     name="imagana_resources_creator_levels_list",
+     *     "/categories/{page}",
+     *     name="imagana_resources_creator_categories_list",
      *     defaults={"page" = "1"},
      *     requirements={"page" = "\d+"},
      * )
      * @Method({"GET"})
-     * @Template("ImaganaResourcesCreatorBundle::levelsManaging.html.twig")
+     * @Template("ImaganaResourcesCreatorBundle::categoriesManaging.html.twig")
      *
      */
-    public function levelsListAction($page = 1) {
+    public function categoriesListAction($page = 1) {
 
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
             $result = array(
-                "tab" => "niveaux"
+                "tab" => "categories"
             );
 
             return $result;
@@ -101,19 +104,35 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveau/{levelName}",
-     *     name="imagana_resources_creator_level_management",
-     *     defaults={"levelName" = ""},
+     *     "/categorie/{categoryName}",
+     *     name="imagana_resources_creator_category_management",
+     *     defaults={"categoryName" = "create"},
      * )
      * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::levelManaging.html.twig")
      *
      */
-    public function levelManaging($levelName = "") {
+    public function categoryManaging(Request $request, $categoryName) {
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
+            $formModel = new imaganaCategoryModel();
+            $formType = new imaganaCategoryType();
+
+            $form = $this->createForm($formType, $formModel);
+
+            // Permet de réafficher un formulaire vide
+            $clearForm = clone $form;
+
+            if ($request->getMethod() == 'POST') {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+
+                }
+            }
+
             $result = array(
-                "tab" => "niveaux"
+                "tab" => "categories",
+                "form"=>$form->createView()
             );
 
             return $result;

@@ -2,6 +2,28 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .nav-tabs {
+            border-bottom: 1px solid #428BCA;
+        }
+
+        .nav.nav-tabs li:not(.active) a {
+            border: 1px solid #DDDDDD;
+            border-bottom: 1px solid #428BCA;
+        }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+            color: #FFFFFF;
+            font-weight: bold;
+            border-color: #428BCA;
+            background-color: #357EBD;
+        }
+
+        table th, table th a {
+            color: #357EBD;
+            background-color: #FFFFFF;
+        }
+    </style>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -22,9 +44,33 @@
 
 {% block content %}
     {% if is_granted('ROLE_SUPERMANAGER') %}
-        {% block resourcesCreatorContent %}
 
-        {% endblock %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="icon fa fa-cubes"></i> ImaganaResourcesCreator
+                        <small>Outil de création de ressources pour Imagana</small>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    {% block resourcesCreatorContentOverride %}
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li {% if tab == "niveaux" %}class="active"{% endif %}><a href="{{ path ("imagana_resources_creator_levels_list") }}"><i class="fa fa-puzzle-piece"></i> Niveaux de jeu <span class="badge badge-info"></span></a></li>
+                            {#<li {% if tab == "modules" %}class="active"{% endif %}><a href="#"><i class="fa fa-cubes"></i> Modules pédagogiques <span class="badge badge-info"></span></a></li>#}
+                            <li {% if tab == "categories" %}class="active"{% endif %}><a href="{{ path ("imagana_resources_creator_categories_list") }}"><i class="fa fa-folder-o"></i> Catégories des niveaux <span class="badge badge-info"></span></a></li>
+                        </ul>
+                    {% endblock %}
+                    {% block resourcesCreatorContent %}
+                    {% endblock %}
+                </div>
+                <div class="panel-footer">
+                    {% block resourcesCreatorButton %}
+                        <a type="button" class="btn btn-primary" href="#" id="submitForm"><i class="fa fa-check"></i> Valider</a>
+                        <a type="button" class="btn btn-default" href="#" id="submitForm"><i class="fa fa-reply"></i> Annuler</a>
+                        <a type="button" class="btn btn-danger pull-right" href="#" id="submitForm"><i class="fa fa-trash-o"></i> Supprimer</a>
+                    {% endblock %}
+                </div>
+            </div>
+
     {% elseif is_granted('IS_AUTHENTICATED_ANONYMOUSLY') %}
         <div class="panel panel-default">
             <div class="row">

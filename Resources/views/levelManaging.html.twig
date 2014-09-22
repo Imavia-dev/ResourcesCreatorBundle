@@ -1,0 +1,20 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block resourcesCreatorContentOverride %}
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_start(form, {'action': path('imagana_resources_creator_level_management'), 'method': 'POST' , 'attr': {'id': 'formLevelManaging'} }) }}
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

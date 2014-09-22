@@ -9,13 +9,7 @@
         <thead>
         <tr>
             <th>
-                <i class="fa fa-wrench"></i> Nom technique
-            </th>
-            <th>
-                <i class="fa fa-tag"></i> Titre
-            </th>
-            <th>
-                <i class="fa fa-folder"></i> Catégorie
+                <i class="fa fa-wrench"></i> Nom de la catégorie
             </th>
             <th>
                 <i class="fa fa-calendar"></i> Date de création
@@ -28,13 +22,7 @@
         <tbody>
         <tr>
             <td>
-                <a href="{{ path('imagana_resources_creator_level_management') }}/jeu_phoneme_0001"><i class="fa fa-pencil-square-o"></i> jeu_phoneme_0001</a>
-            </td>
-            <td>
-                titre du niveau
-            </td>
-            <td>
-                phonème
+                <a href="#"><i class="fa fa-pencil-square-o"></i> volcan</a>
             </td>
             <td>
                 19/09/2014 12h34
@@ -48,7 +36,7 @@
 {% endblock %}
 
 {% block resourcesCreatorButton %}
-    <button type="button" class="btn btn-primary btn-sm"><i class="icon fa fa-cube"></i> Créer un niveau</button>
+    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_category_management')}}"><i class="icon fa fa-folder"></i> Créer une catégorie</a>
 {% endblock %}
 
 {% block javascripts %}

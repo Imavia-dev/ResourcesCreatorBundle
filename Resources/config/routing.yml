@@ -2,3 +2,8 @@ imagana_resources_creator_levels:
     resource: "@ImaganaResourcesCreatorBundle/Controller/LevelsController.php"
     type:     annotation
     prefix:   /
+
+imagana_resources_creator_categories:
+    resource: "@ImaganaResourcesCreatorBundle/Controller/CategoriesController.php"
+    type:     annotation
+    prefix:   /
