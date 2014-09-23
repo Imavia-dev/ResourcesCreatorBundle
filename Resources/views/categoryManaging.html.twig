@@ -5,17 +5,44 @@
 {% endblock %}
 
 {% block resourcesCreatorContent %}
-    {{ form_start(form, {'action': route, 'method': 'POST' , 'attr': {'id': 'formCategoryManaging'} }) }}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice alert alert-success">
+            <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-notice alert alert-danger">
+            <i class="icon fa fa-exclamation-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+
+    {% if categoryName is defined %}
+        {{ form_start(form, {'action': path(route, {"categoryName": categoryName}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent', 'class': 'margin-top-md'} }) }}
+    {% else %}
+        {{ form_start(form, {'action': path(route), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+    {% endif %}
     {{ form_widget(form) }}
     {{ form_errors(form) }}
     {{ form_end(form) }}
 {% endblock %}
 
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
+
+    {% if categoryName is defined %}
+        <a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
+    {% endif %}
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script>
-        $('#submitForm').click(function () {
-            $("form[id=formCategoryManaging]").submit();
+        $('#submitForm').click(function (event) {
+            event.preventDefault();
+            $("form[id=formResourcesCreatorContent]").submit();
         });
     </script>
 {% endblock %}

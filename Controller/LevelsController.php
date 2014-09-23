@@ -92,7 +92,8 @@ class LevelsController extends Controller {
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
             $result = array(
-                "tab" => "niveaux"
+                "tab" => "niveaux",
+                "nveaux" => ""
             );
 
             return $result;

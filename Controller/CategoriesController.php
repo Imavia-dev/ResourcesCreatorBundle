@@ -4,6 +4,7 @@ namespace Imagana\ResourcesCreatorBundle\Controller;
 
 use Claroline\CoreBundle\Manager\RoleManager;
 use Claroline\CoreBundle\Manager\UserManager;
+use Entity\Category;
 use Imagana\AccountsManagerBundle\Document\PlayersDirectory;
 use JMS\Serializer\Tests\Serializer\DateIntervalFormatTest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,6 +37,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Imagana\ResourcesCreatorBundle\FormModel\imaganaCategoryModel;
 use Imagana\ResourcesCreatorBundle\Form\imaganaCategoryType;
+use Imagana\ResourcesCreatorBundle\Document\LevelCategory;
 
 /*
  * Class MainController
@@ -94,8 +96,11 @@ class CategoriesController extends Controller {
 
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
+            // @TODO repository function to list all categories ordered by name
+
             $result = array(
-                "tab" => "categories"
+                "tab" => "categories",
+                "categories" => ""
             );
 
             return $result;
@@ -104,39 +109,107 @@ class CategoriesController extends Controller {
 
     /**
      * @Route(
-     *     "/categorie/{categoryName}",
-     *     name="imagana_resources_creator_category_management",
-     *     defaults={"categoryName" = "create"},
+     *     "/categorie/creer",
+     *     name="imagana_resources_creator_category_create",
      * )
      * @Method({"GET", "POST"})
-     * @Template("ImaganaResourcesCreatorBundle::levelManaging.html.twig")
+     * @Template("ImaganaResourcesCreatorBundle::categoryManaging.html.twig")
      *
      */
-    public function categoryManaging(Request $request, $categoryName) {
-        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+    public function categoryCreate(Request $request) {
+        $formModel = new imaganaCategoryModel();
+        $formType = new imaganaCategoryType();
 
-            $formModel = new imaganaCategoryModel();
-            $formType = new imaganaCategoryType();
+        $form = $this->createForm($formType, $formModel);
 
-            $form = $this->createForm($formType, $formModel);
+        if ($request->getMethod() == 'POST') {
 
-            // Permet de réafficher un formulaire vide
-            $clearForm = clone $form;
+            $flashBag = "notice";
+            $flashBagContent = "";
 
-            if ($request->getMethod() == 'POST') {
-                $form->handleRequest($request);
-                if ($form->isValid()) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                //$dm = $this->container->get('doctrine_mongodb')->getManager();
 
-                }
+                $parameters = $request->request->all();
+
+                $categoryDescription = $parameters['imagana_resourcescreatorbundle_imaganacategorytype']['description'];
+
+                //$user = $this->container->get('security.context')->getToken()->getUser();
+
+                /*$newCategory = new LevelCategory();
+                $newCategory->setDescription($categoryDescription);
+                $newCategory->setCreator($user);
+                $newCategory->setCreationDate(new \DateTime());
+
+                $dm->persist($newCategory);
+                $dm->flush($newCategory);*/
+
+                $flashBagContent = "La catégorie " . $categoryDescription . " a bien été créée";
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "Le formulaire est invalide, veuillez le corriger.";
             }
 
-            $result = array(
-                "tab" => "categories",
-                "form"=>$form->createView()
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
             );
-
-            return $result;
         }
+
+        $result = array(
+            "tab" => "categories",
+            "form"=>$form->createView(),
+            "route" => "imagana_resources_creator_category_create",
+            "previousRoute" => "imagana_resources_creator_categories_list"
+        );
+
+        return $result;
+    }
+
+    /**
+     * @Route(
+     *     "/categorie/editer/{categoryName}",
+     *     name="imagana_resources_creator_category_edit",
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::categoryManaging.html.twig")
+     *
+     */
+    public function categoryEdit(Request $request, $categoryName) {
+        $formModel = new imaganaCategoryModel();
+        $formType = new imaganaCategoryType();
+
+        $form = $this->createForm($formType, $formModel);
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+
+            }
+        }
+
+        $result = array(
+            "tab" => "categories",
+            "form"=>$form->createView(),
+            "route" => "imagana_resources_creator_category_edit",
+            "categoryName" => $categoryName,
+            "previousRoute" => "imagana_resources_creator_categories_list"
+        );
+
+        return $result;
+    }
+
+    /**
+     * @Route(
+     *     "/categorie/supprimer/{categoryName}",
+     *     name="imagana_resources_creator_category_delete",
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::categoryManaging.html.twig")
+     *
+     */
+    public function categoryDelete(Request $request, $categoryName) {
     }
 
 }

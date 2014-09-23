@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block resourcesCreatorContent %}
+    {% if niveaux is defined and niveaux is not empty %}
     <table class="table table-condensed table-hover">
         <thead>
         <tr>
@@ -45,6 +46,11 @@
         </tr>
         </tbody>
     </table>
+    {% else %}
+        <p class="alert alert-warning margin-top-md">
+            <i class="icon fa fa-exclamation-circle"></i> <strong>Aucun niveaux trouvés !</strong>
+        </p>
+    {% endif %}
 {% endblock %}
 
 {% block resourcesCreatorButton %}
