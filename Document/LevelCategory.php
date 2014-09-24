@@ -29,8 +29,11 @@ class LevelCategory {
     /** @ODM\String */
     private $creator ;
 
-    /** @ODM\String */
+    /** @ODM\Date */
     private $creationDate;
+
+    /** @ODM\Boolean */
+    private $isActive ;
 
     /**
      * @param mixed $creationDate
@@ -95,6 +98,24 @@ class LevelCategory {
     {
         return $this->id;
     }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+    
+
 
 
 

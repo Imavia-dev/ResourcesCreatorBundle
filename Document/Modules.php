@@ -38,8 +38,8 @@ class Modules {
 
 
     /** @ODM\ReferenceMany(
-     *      strategy="addToSet"
-     *      cascade="all"
+     *      strategy="addToSet",
+     *      cascade="all",
      *      targetDocument="Level"
      * )
      */

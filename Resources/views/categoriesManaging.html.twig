@@ -21,17 +21,23 @@
             </tr>
             </thead>
             <tbody>
+            {%  for category in categories  %}
+
+
             <tr>
                 <td>
-                    <a href="{{ path('imagana_resources_creator_category_edit', {'categoryName': 'volcan'}) }}"><i class="fa fa-pencil-square-o"></i> volcan</a>
+                    <a href="{{ path('imagana_resources_creator_category_edit', {'categoryName': category.description}) }}"><i class="fa fa-pencil-square-o"></i> {{  category.description }}</a>
                 </td>
                 <td>
-                    19/09/2014 12h34
+                   {{ category.creationDate | date("d/m/Y H:i:s", "Europe/Paris") }}
                 </td>
                 <td>
-                    Administrateur
+                    {{ category.creator }}
+
                 </td>
             </tr>
+
+             {% endfor %}
             </tbody>
         </table>
     {% else %}

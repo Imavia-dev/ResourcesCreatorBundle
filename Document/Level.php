@@ -47,8 +47,8 @@ class Level {
 
 
     /** @ODM\ReferenceMany(
-     *      strategy="addToSet"
-     *      cascade="all"
+     *      strategy="addToSet",
+     *      cascade="all",
      *      targetDocument="PedagogicalPurpose"
      * )
      */
@@ -56,7 +56,7 @@ class Level {
 
 
     /** @ODM\ReferenceOne(
-     *      cascade="all"
+     *      cascade="all",
      *      targetDocument="LevelCategory"
      * )
      */

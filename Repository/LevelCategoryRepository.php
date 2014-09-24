@@ -13,4 +13,16 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 
 class LevelCategoryRepository  extends DocumentRepository{
 
+    public function getAllActivesCategories()
+    {
+        return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
+
+    }
+
+    public function getCategoriesByDescription($description)
+    {
+        return $this->createQueryBuilder()->field('description')->equals($description)->getQuery()->getSingleResult();
+
+    }
+
 }
