@@ -5,9 +5,20 @@
 {% endblock %}
 
 {% block resourcesCreatorContentOverride %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice alert alert-success">
+            <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-notice alert alert-danger">
+            <i class="icon fa fa-exclamation-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
     <div class="row">
         <div class="col-md-12">
-            {{ form_start(form, {'action': path('imagana_resources_creator_level_management'), 'method': 'POST' , 'attr': {'id': 'formLevelManaging'} }) }}
+            {{ form_start(form, {'action': path('imagana_resources_creator_niveau_create'), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
             {{ form_widget(form) }}
             {{ form_errors(form) }}
             {{ form_end(form) }}
@@ -15,6 +26,21 @@
     </div>
 {% endblock %}
 
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
+
+    {% if categoryName is defined %}
+        <a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
+    {% endif %}
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        $('#submitForm').click(function (event) {
+            event.preventDefault();
+            $("form[id=formResourcesCreatorContent]").submit();
+        });
+    </script>
 {% endblock %}

@@ -11,6 +11,6 @@ namespace Imagana\ResourcesCreatorBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 
 
-class CategoryRepository  extends DocumentRepository{
+class LevelCategoryRepository  extends DocumentRepository{
 
 }
