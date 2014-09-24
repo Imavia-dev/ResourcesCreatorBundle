@@ -27,23 +27,28 @@
         </tr>
         </thead>
         <tbody>
+        {% for niveau in niveaux %}
         <tr>
+
             <td>
-                <a href="{{ path('imagana_resources_creator_level_management') }}/jeu_phoneme_0001"><i class="fa fa-pencil-square-o"></i> jeu_phoneme_0001</a>
+                <a href="{{ path('imagana_resources_creator_level_edit',{"technicalName":niveau.technicalName }) }}"><i class="fa fa-pencil-square-o"></i> {{ niveau.technicalName }}</a>
             </td>
             <td>
-                titre du niveau
+               {{ niveau.title}}
             </td>
             <td>
-                phonème
+                {{ niveau.levelCategory }}
             </td>
             <td>
-                19/09/2014 12h34
+                {{ niveau.creationDate | date("d/m/Y H:i:s", "Europe/Paris")}}
             </td>
             <td>
-                Administrateur
+                {{ niveau.creator }}
             </td>
+
+
         </tr>
+        {% endfor %}
         </tbody>
     </table>
     {% else %}
@@ -54,7 +59,7 @@
 {% endblock %}
 
 {% block resourcesCreatorButton %}
-    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_niveau_create')}}"><i class="icon fa fa-cube"></i> Créer un niveau</a>
+    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_level_create')}}"><i class="icon fa fa-cube"></i> Créer un niveau</a>
 {% endblock %}
 
 {% block javascripts %}

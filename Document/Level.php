@@ -30,7 +30,7 @@ class Level {
     /** @ODM\String */
     private $technicalName ;
 
-    /** @ODM\String */
+    /** @ODM\Date */
     private $creationDate;
 
     /** @ODM\String */
@@ -45,6 +45,16 @@ class Level {
     /** @ODM\String */
     private $moreInformation;
 
+    /** @ODM\Boolean */
+    private $isActive;
+
+    /** @ODM\ObjectId
+     */
+
+
+
+    private $levelCategory ;
+
 
     /** @ODM\ReferenceMany(
      *      strategy="addToSet",
@@ -54,14 +64,6 @@ class Level {
      */
     private $pedagogicalPurpose ;
 
-
-    /** @ODM\ReferenceOne(
-     *      cascade="all",
-     *      targetDocument="LevelCategory"
-     * )
-     */
-
-    private $levelCategory ;
 
 
     public function __construct(){
@@ -229,6 +231,22 @@ class Level {
     public function getLevelCategory()
     {
         return $this->levelCategory;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 
 

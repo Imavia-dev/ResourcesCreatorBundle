@@ -19,10 +19,12 @@ class LevelCategoryRepository  extends DocumentRepository{
 
     }
 
-    public function getCategoriesByDescription($description)
+    public function getCategoryByDescription($description)
     {
         return $this->createQueryBuilder()->field('description')->equals($description)->getQuery()->getSingleResult();
 
     }
+
+
 
 }

@@ -13,4 +13,15 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 
 class LevelRepository  extends DocumentRepository{
 
+    public function getAllActiveLevels()
+    {
+        return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
+
+    }
+
+    public function getLevelByTechnicalName($technicalName)
+    {
+        return $this->createQueryBuilder()->field('technicalName')->equals($technicalName)->getQuery()->getSingleResult();
+    }
+
 }

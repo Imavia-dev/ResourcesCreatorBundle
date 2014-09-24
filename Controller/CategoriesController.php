@@ -194,9 +194,6 @@ class CategoriesController extends Controller {
     public function categoryEdit(Request $request, $categoryName) {
         $formModel = new CategoryModel();
 
-        // @TODO repository function to retrieve the levelCategory
-        // $categoryToEdit = ;
-
         $formModel->setDescription($categoryName);
         $formType = new CategoryType();
 
