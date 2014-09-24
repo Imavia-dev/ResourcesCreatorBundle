@@ -12,7 +12,7 @@ namespace Imagana\ResourcesCreatorBundle\Document;
 /**
  * Class Category
  * @ODM\Document(
- *     collection="level",
+ *     collection="PedagogicalPurpose",
  *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\PedagogicalPurpose"
  * )
  */

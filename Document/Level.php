@@ -13,9 +13,9 @@ use Doctrine\Common\Collections\ArrayCollection ;
 
 
 /**
- * Class Category
+ * Class Level
  * @ODM\Document(
- *     collection="level",
+ *     collection="Level",
  *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\LevelRepository"
  * )
  */
@@ -54,15 +54,14 @@ class Level {
      */
     private $pedagogicalPurpose ;
 
-    /** @ODM\ReferenceMany(
-     *      strategy="addToSet"
+
+    /** @ODM\ReferenceOne(
      *      cascade="all"
-     *      targetDocument="Modules"
+     *      targetDocument="LevelCategory"
      * )
      */
-    private $modules ;
 
-
+    private $levelCategory ;
 
 
     public function __construct(){
@@ -215,6 +214,23 @@ class Level {
     {
         return $this->pedagogicalPurpose;
     }
+
+    /**
+     * @param mixed $levelCategory
+     */
+    public function setLevelCategory($levelCategory)
+    {
+        $this->levelCategory = $levelCategory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLevelCategory()
+    {
+        return $this->levelCategory;
+    }
+
 
 
 

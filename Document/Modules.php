@@ -12,6 +12,13 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
 use Doctrine\Common\Collections\ArrayCollection ;
 
 
+/**
+ * Class Modules
+ * @ODM\Document(
+ *     collection="Modules",
+ *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\ModulesRepository"
+ * )
+ */
 class Modules {
 
     /** @ODM\Id */
@@ -28,6 +35,21 @@ class Modules {
 
     /** @ODM\String */
     private $pedagogicalFlow;
+
+
+    /** @ODM\ReferenceMany(
+     *      strategy="addToSet"
+     *      cascade="all"
+     *      targetDocument="Level"
+     * )
+     */
+    private $levels ;
+
+
+    public function __construct(){
+        $this->levels = new ArrayCollection() ;
+    }
+
 
     /**
      * @param mixed $difficulties
@@ -108,6 +130,24 @@ class Modules {
     {
         return $this->title;
     }
+
+    /**
+     * @param mixed $levels
+     */
+    public function setLevels(ArrayCollection $levels)
+    {
+        $this->levels = $levels;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLevels()
+    {
+        return $this->levels;
+    }
+
+
 
 
 } 
