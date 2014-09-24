@@ -11,7 +11,7 @@ namespace Imagana\ResourcesCreatorBundle\FormModel;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ExecutionContext;
 
-class imaganaCategoryModel {
+class CategoryModel {
 
     /**
      * @assert\Length(

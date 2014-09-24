@@ -11,7 +11,7 @@ namespace Imagana\ResourcesCreatorBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class imaganaCategoryType extends AbstractType {
+class CategoryType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $fb ,array $options){
         $fb->add('description', 'text', array(
@@ -19,6 +19,12 @@ class imaganaCategoryType extends AbstractType {
             'label' => "Nom de la catégorie",
             'attr' => array('placeholder' => 'Nom de la catégorie'),
         ));
+
+        /*$fb->add('categorie', 'collection', array(
+            'type' => new imaganaCategoryType(),
+            'allow_add' => true,
+            'by_reference' => false
+        ));*/
 
         $form = $fb->getForm();
 

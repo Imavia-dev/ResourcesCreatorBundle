@@ -5,6 +5,8 @@ namespace Imagana\ResourcesCreatorBundle\Controller;
 use Claroline\CoreBundle\Manager\RoleManager;
 use Claroline\CoreBundle\Manager\UserManager;
 use Imagana\AccountsManagerBundle\Document\PlayersDirectory;
+use Imagana\ResourcesCreatorBundle\Form\ModuleLevelsType;
+use Imagana\ResourcesCreatorBundle\Form\ModulesType;
 use JMS\Serializer\Tests\Serializer\DateIntervalFormatTest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,7 +41,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 /**
  * @Route("admin/open/ImaganaResourcesCreator")
  */
-class LevelsController extends Controller {
+class ModulesController extends Controller {
 
     private $usermanager;
     private $objectManager;
@@ -75,8 +77,8 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveaux/{page}",
-     *     name="imagana_resources_creator_levels_list",
+     *     "/modules/{page}",
+     *     name="imagana_resources_creator_modules_list",
      *     defaults={"page" = "1"},
      *     requirements={"page" = "\d+"},
      * )
@@ -84,19 +86,45 @@ class LevelsController extends Controller {
      * @Template("ImaganaResourcesCreatorBundle::levelsManaging.html.twig")
      *
      */
-    public function levelsListAction($page = 1) {
+    public function modulesListAction($page = 1) {
 
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
             // @TODO repository function to list all niveaux ordered by name
 
             $result = array(
-                "tab" => "niveaux",
-                "niveaux" => ""
+                "tab" => "modules",
+                "modules" => ""
             );
 
             return $result;
         }
+    }
+
+
+    /**
+     * @Route(
+     *     "/module/creer",
+     *     name="imagana_resources_creator_modules_create",
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::categoryManaging.html.twig")
+     *
+     */
+    public function modulesCreate(Request $request) {
+
+        $formType = new ModulesType();
+
+        $form = $this->createForm($formType);
+
+        $result = array(
+            "tab" => "modules",
+            "form"=>$form->createView(),
+            "route" => "imagana_resources_creator_modules_create",
+            "previousRoute" => "imagana_resources_creator_modules_list"
+        );
+
+        return $result;
     }
 
 }

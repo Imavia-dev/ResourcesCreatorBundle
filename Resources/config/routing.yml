@@ -7,3 +7,8 @@ imagana_resources_creator_categories:
     resource: "@ImaganaResourcesCreatorBundle/Controller/CategoriesController.php"
     type:     annotation
     prefix:   /
+
+imagana_resources_creator_modules:
+    resource: "@ImaganaResourcesCreatorBundle/Controller/ModulesController.php"
+    type:     annotation
+    prefix:   /

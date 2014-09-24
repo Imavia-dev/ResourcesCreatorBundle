@@ -55,7 +55,7 @@
                     {% block resourcesCreatorContentOverride %}
                         <ul class="nav nav-tabs" role="tablist">
                             <li {% if tab == "niveaux" %}class="active"{% endif %}><a href="{{ path ("imagana_resources_creator_levels_list") }}"><i class="fa fa-puzzle-piece"></i> Niveaux de jeu <span class="badge badge-info"></span></a></li>
-                            {#<li {% if tab == "modules" %}class="active"{% endif %}><a href="#"><i class="fa fa-cubes"></i> Modules pédagogiques <span class="badge badge-info"></span></a></li>#}
+                            <li {% if tab == "modules" %}class="active"{% endif %}><a href="{{ path("imagana_resources_creator_modules_list") }}"><i class="fa fa-cubes"></i> Modules pédagogiques <span class="badge badge-info"></span></a></li>
                             <li {% if tab == "categories" %}class="active"{% endif %}><a href="{{ path ("imagana_resources_creator_categories_list") }}"><i class="fa fa-folder-o"></i> Catégories des niveaux <span class="badge badge-info"></span></a></li>
                         </ul>
                     {% endblock %}

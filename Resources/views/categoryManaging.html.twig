@@ -17,7 +17,6 @@
         </div>
     {% endfor %}
 
-
     {% if categoryName is defined %}
         {{ form_start(form, {'action': path(route, {"categoryName": categoryName}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent', 'class': 'margin-top-md'} }) }}
     {% else %}

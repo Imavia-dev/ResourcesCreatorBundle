@@ -35,8 +35,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Imagana\ResourcesCreatorBundle\FormModel\imaganaCategoryModel;
-use Imagana\ResourcesCreatorBundle\Form\imaganaCategoryType;
+use Imagana\ResourcesCreatorBundle\FormModel\CategoryModel;
+use Imagana\ResourcesCreatorBundle\Form\CategoryType;
 use Imagana\ResourcesCreatorBundle\Document\LevelCategory;
 
 /*
@@ -117,15 +117,14 @@ class CategoriesController extends Controller {
      *
      */
     public function categoryCreate(Request $request) {
-        $formModel = new imaganaCategoryModel();
-        $formType = new imaganaCategoryType();
+        $formModel = new CategoryModel();
+        $formType = new CategoryType();
 
         $form = $this->createForm($formType, $formModel);
 
         if ($request->getMethod() == 'POST') {
 
             $flashBag = "notice";
-            $flashBagContent = "";
 
             $form->handleRequest($request);
             if ($form->isValid()) {
@@ -177,16 +176,44 @@ class CategoriesController extends Controller {
      *
      */
     public function categoryEdit(Request $request, $categoryName) {
-        $formModel = new imaganaCategoryModel();
-        $formType = new imaganaCategoryType();
+        $formModel = new CategoryModel();
+
+        // @TODO repository function to retrieve the levelCategory
+        // $categoryToEdit = ;
+
+        $formModel->setDescription($categoryName);
+        $formType = new CategoryType();
 
         $form = $this->createForm($formType, $formModel);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            if ($form->isValid()) {
 
+            $flashBag = "notice";
+            $flashBagContent = "";
+
+            if ($form->isValid()) {
+                //$dm = $this->container->get('doctrine_mongodb')->getManager();
+
+                $parameters = $request->request->all();
+
+                $categoryDescription = $parameters['imagana_resourcescreatorbundle_imaganacategorytype']['description'];
+
+                //$categoryToEdit->setDescription($categoryDescription);
+
+                //$dm->persist($newCategory);
+                //$dm->flush($newCategory);
+
+                $flashBagContent = "La catégorie " . $categoryDescription . " a bien été mise à jour";
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "Le formulaire est invalide, veuillez le corriger.";
             }
+
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
+            );
         }
 
         $result = array(
@@ -210,6 +237,12 @@ class CategoriesController extends Controller {
      *
      */
     public function categoryDelete(Request $request, $categoryName) {
+
+        // @TODO repository function to retrieve the levelCategory
+        // $categoryToDelete = ;
+
+
+        // @TODO reository function edit all levels with categoryName to ""
     }
 
 }
