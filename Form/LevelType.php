@@ -24,18 +24,27 @@ class LevelType extends AbstractType {
                 'label' => "Nom technique du niveau",
                 'attr' => array('placeholder' => 'Nom technique du niveau'),
             ))
+            ->add('description', 'textarea', array(
+                'required' => false,
+                'label' => "Nom de la fiche pédagogique",
+                'attr' => array('placeholder' => 'Nom de la fiche pédagogique'),
+            ))
+            ->add('levelWords', 'textarea', array(
+                'required' => true,
+                'label' => "Mots présents dans le niveau",
+                'attr' => array('placeholder' => 'Liste des mots présents dans le niveau'),
+            ))
+            ->add('moreInformation', 'textarea', array(
+                'required' => false,
+                'label' => "Pour aller plus loin en présentiel",
+                'attr' => array('placeholder' => 'Ecrivez ici des activités à réaliser en présentiel pour accompagner l\'apprentissage'),
+            ))
             ->add('LevelCategory', 'document', array(
                 'class' => 'Imagana\ResourcesCreatorBundle\Document\LevelCategory',
                 'property' => 'description',
                 'required' => true,
                 'label' => "Catégorie"
-            ))
-            /*->add('Modules', 'document', array(
-                'class' => 'Imagana\ResourcesCreatorBundle\Document\Modules',
-                'property' => 'title',
-                'required' => true,
-                'label' => "Modules pédagogiques associés"
-            ))*/;
+            ));
 
         $form = $fb->getForm();
 

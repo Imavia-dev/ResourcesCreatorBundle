@@ -12,13 +12,13 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
 
 
 /**
- * Class Category
+ * Class LevelCategory
  * @ODM\Document(
  *     collection="levelCategory",
- *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\CategoryRepository"
+ *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\LevelCategoryRepository"
  * )
  */
-class Category {
+class LevelCategory {
 
     /** @ODM\Id */
     private $id ;

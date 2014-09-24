@@ -31,6 +31,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Imagana\ResourcesCreatorBundle\FormModel\LevelModel;
+use Imagana\ResourcesCreatorBundle\Form\LevelType;
+
 /*
  * Class MainController
  * @package Imagana\ResourcesCreatorBundle\Controller
@@ -97,6 +100,32 @@ class LevelsController extends Controller {
 
             return $result;
         }
+    }
+
+    /**
+     * @Route(
+     *     "/niveau/creer",
+     *     name="imagana_resources_creator_niveau_create",
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::levelManaging.html.twig")
+     *
+     */
+    public function levelCreate(Request $request) {
+
+        $formType = new LevelType();
+        $formModel = new LevelModel();
+
+        $form = $this->createForm($formType, $formModel);
+
+        $result = array(
+            "tab" => "modules",
+            "form"=>$form->createView(),
+            "route" => "imagana_resources_creator_modules_create",
+            "previousRoute" => "imagana_resources_creator_modules_list"
+        );
+
+        return $result;
     }
 
 }
