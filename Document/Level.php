@@ -46,6 +46,32 @@ class Level {
     private $moreInformation;
 
 
+    /** @ODM\ReferenceMany(
+     *      strategy="addToSet"
+     *      cascade="all"
+     *      targetDocument="PedagogicalPurpose"
+     * )
+     */
+    private $pedagogicalPurpose ;
+
+    /** @ODM\ReferenceMany(
+     *      strategy="addToSet"
+     *      cascade="all"
+     *      targetDocument="Modules"
+     * )
+     */
+    private $modules ;
+
+
+
+
+    public function __construct(){
+
+        $this->pedagogicalPurpose=new ArrayCollection();
+
+    }
+
+
     /**
      * @param mixed $creationDate
      */
@@ -173,6 +199,24 @@ class Level {
     {
         return $this->moreInformation;
     }
+
+    /**
+     * @param mixed $pedagogicalPurpose
+     */
+    public function setPedagogicalPurpose(ArrayCollection $pedagogicalPurpose)
+    {
+        $this->pedagogicalPurpose = $pedagogicalPurpose;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPedagogicalPurpose()
+    {
+        return $this->pedagogicalPurpose;
+    }
+
+
 
 
 }
