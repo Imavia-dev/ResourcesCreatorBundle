@@ -96,11 +96,22 @@ class CategoriesController extends Controller {
 
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
+            $dm = $this->container->get('doctrine_mongodb')->getManager();
+            $categoriesRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelCategory');
+
+
+            // Get list of all active categories
+            $categories = $categoriesRepository->getAllActivesCategories();
+
+
+
+
+
             // @TODO repository function to list all categories ordered by name
 
             $result = array(
                 "tab" => "categories",
-                "categories" => ""
+                "categories" => $categories
             );
 
             return $result;
@@ -128,21 +139,26 @@ class CategoriesController extends Controller {
 
             $form->handleRequest($request);
             if ($form->isValid()) {
-                //$dm = $this->container->get('doctrine_mongodb')->getManager();
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
 
                 $parameters = $request->request->all();
 
                 $categoryDescription = $parameters['imagana_resourcescreatorbundle_imaganacategorytype']['description'];
 
-                //$user = $this->container->get('security.context')->getToken()->getUser();
 
-                /*$newCategory = new LevelCategory();
+
+                $user = $this->container->get('security.context')->getToken()->getUser()->getUsername();
+
+
+
+                $newCategory = new LevelCategory();
                 $newCategory->setDescription($categoryDescription);
                 $newCategory->setCreator($user);
                 $newCategory->setCreationDate(new \DateTime());
+                $newCategory->setIsActive(true);
 
                 $dm->persist($newCategory);
-                $dm->flush($newCategory);*/
+                $dm->flush($newCategory);
 
                 $flashBagContent = "La catégorie " . $categoryDescription . " a bien été créée";
             } else {
@@ -178,9 +194,6 @@ class CategoriesController extends Controller {
     public function categoryEdit(Request $request, $categoryName) {
         $formModel = new CategoryModel();
 
-        // @TODO repository function to retrieve the levelCategory
-        // $categoryToEdit = ;
-
         $formModel->setDescription($categoryName);
         $formType = new CategoryType();
 
@@ -193,16 +206,18 @@ class CategoriesController extends Controller {
             $flashBagContent = "";
 
             if ($form->isValid()) {
-                //$dm = $this->container->get('doctrine_mongodb')->getManager();
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
+                $categoriesRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelCategory');
 
                 $parameters = $request->request->all();
 
+
                 $categoryDescription = $parameters['imagana_resourcescreatorbundle_imaganacategorytype']['description'];
+                $categoryToEdit =  $categoriesRepository->getCategoriesByDescription($categoryName);
+                $categoryToEdit->setDescription($categoryDescription);
 
-                //$categoryToEdit->setDescription($categoryDescription);
-
-                //$dm->persist($newCategory);
-                //$dm->flush($newCategory);
+                $dm->persist($categoryToEdit);
+                $dm->flush($categoryToEdit);
 
                 $flashBagContent = "La catégorie " . $categoryDescription . " a bien été mise à jour";
             } else {

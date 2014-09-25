@@ -18,7 +18,11 @@
     {% endfor %}
     <div class="row">
         <div class="col-md-12">
-            {{ form_start(form, {'action': path('imagana_resources_creator_niveau_create'), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% if technicalName is defined %}
+                {{ form_start(form, {'action': path(route,{"technicalName":technicalName}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% else %}
+                {{ form_start(form, {'action': path(route), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% endif %}
             {{ form_widget(form) }}
             {{ form_errors(form) }}
             {{ form_end(form) }}

@@ -39,7 +39,7 @@ class LevelType extends AbstractType {
                 'label' => "Pour aller plus loin en présentiel",
                 'attr' => array('placeholder' => 'Ecrivez ici des activités à réaliser en présentiel pour accompagner l\'apprentissage'),
             ))
-            ->add('LevelCategory', 'document', array(
+            ->add('levelCategory', 'document', array(
                 'class' => 'Imagana\ResourcesCreatorBundle\Document\LevelCategory',
                 'property' => 'description',
                 'required' => true,

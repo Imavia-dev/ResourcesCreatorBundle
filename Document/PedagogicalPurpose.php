@@ -4,21 +4,23 @@
  * User: sebastien
  * Date: 22/09/14
  * Time: 16:00
+ * User: jerome
+ * Date: 24/09/14
+ * Time: 09:20
  */
 
 namespace Imagana\ResourcesCreatorBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
-use Doctrine\Common\Collections\ArrayCollection ;
-
 
 /**
- * Class PedagogicalPurpose
+ * Class Category
  * @ODM\Document(
  *     collection="PedagogicalPurpose",
- *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\PedagogicalPurposeRepository"
+ *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\PedagogicalPurpose"
  * )
  */
+
 class PedagogicalPurpose {
 
     /** @ODM\Id */

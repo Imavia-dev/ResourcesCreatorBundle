@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection ;
 
 
 /**
- * Class Category
+ * Class Level
  * @ODM\Document(
  *     collection="Level",
  *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\LevelRepository"
@@ -30,7 +30,7 @@ class Level {
     /** @ODM\String */
     private $technicalName ;
 
-    /** @ODM\String */
+    /** @ODM\Date */
     private $creationDate;
 
     /** @ODM\String */
@@ -44,6 +44,33 @@ class Level {
 
     /** @ODM\String */
     private $moreInformation;
+
+    /** @ODM\Boolean */
+    private $isActive;
+
+    /** @ODM\ObjectId
+     */
+
+
+
+    private $levelCategory ;
+
+
+    /** @ODM\ReferenceMany(
+     *      strategy="addToSet",
+     *      cascade="all",
+     *      targetDocument="PedagogicalPurpose"
+     * )
+     */
+    private $pedagogicalPurpose ;
+
+
+
+    public function __construct(){
+
+        $this->pedagogicalPurpose=new ArrayCollection();
+
+    }
 
 
     /**
@@ -173,6 +200,57 @@ class Level {
     {
         return $this->moreInformation;
     }
+
+    /**
+     * @param mixed $pedagogicalPurpose
+     */
+    public function setPedagogicalPurpose(ArrayCollection $pedagogicalPurpose)
+    {
+        $this->pedagogicalPurpose = $pedagogicalPurpose;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPedagogicalPurpose()
+    {
+        return $this->pedagogicalPurpose;
+    }
+
+    /**
+     * @param mixed $levelCategory
+     */
+    public function setLevelCategory($levelCategory)
+    {
+        $this->levelCategory = $levelCategory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLevelCategory()
+    {
+        return $this->levelCategory;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+
+
 
 
 }
