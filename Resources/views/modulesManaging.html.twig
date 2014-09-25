@@ -1,0 +1,52 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block resourcesCreatorContent %}
+    {% if modules is defined and modules is not empty %}
+    <table class="table table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>
+                <i class="fa fa-tag"></i> Titre du module
+            </th>
+            <th>
+                <i class="fa fa-calendar"></i> Date de création
+            </th>
+            <th>
+                <i class="fa fa-user"></i> Créateur
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for module in modules %}
+        <tr>
+            <td>
+                <a href="{{ path('imagana_resources_creator_module_edit',{"param":module.title }) }}"><i class="fa fa-pencil-square-o"></i> {{ module.title }}</a>
+            </td>
+            <td>
+                {{ module.creationDate | date("d/m/Y H:i:s", "Europe/Paris")}}
+            </td>
+            <td>
+                {{ module.creator }}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="alert alert-warning margin-top-md">
+            <i class="icon fa fa-exclamation-circle"></i> <strong>Aucun modules trouvés !</strong>
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_modules_create')}}"><i class="icon fa fa-cube"></i> Créer un module</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

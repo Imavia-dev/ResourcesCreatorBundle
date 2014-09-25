@@ -94,11 +94,7 @@ class LevelsController extends Controller {
             $dm = $this->container->get('doctrine_mongodb')->getManager();
             $levelsRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:Level");
 
-
             $levelsarray = $levelsRepo->getAllActiveLevels();
-
-         
-            // @TODO repository function to list all niveaux ordered by name
 
             $result = array(
                 "tab" => "niveaux",
@@ -133,7 +129,7 @@ class LevelsController extends Controller {
             $form->handleRequest($request);
             if($form->isValid()){
 
-                $dm         = $this->container->get('doctrine_mongodb')->getManager();
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
                 $categoriesRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelCategory');
                 $parameters = $request->request->all();
 
@@ -145,9 +141,6 @@ class LevelsController extends Controller {
                 $levelmoreInfo      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['moreInformation'];
                 $levelCategory      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelCategory'];
                 $user = $this->container->get('security.context')->getToken()->getUser()->getUsername();
-
-
-
 
                 $newlevel = new Level() ;
 
@@ -165,7 +158,7 @@ class LevelsController extends Controller {
                 $dm->flush($newlevel);
 
 
-                $flashBagContent = "Le Niveau " . $levelTitle . " a bien été créée";
+                $flashBagContent = "Le Niveau " . $levelTitle . " a bien été créé";
             }else {
                 $flashBag = "error";
                 $flashBagContent = "Le formulaire est invalide, veuillez le corriger.";
@@ -189,38 +182,71 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveau/editer/{technicalName}",
+     *     "/niveau/editer/{param}",
      *     name="imagana_resources_creator_level_edit",
      * )
      * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::levelManaging.html.twig")
      *
      */
-    public function levelEdit(Request $request , $technicalName){
+    public function levelEdit(Request $request , $param){
+        $technicalName = $param;
         $formModel = new LevelModel() ;
 
         $dm = $this->container->get('doctrine_mongodb')->getManager();
-        $levelRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
+        $levelsRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
 
+        $levelToUpdate = $levelsRepository->getLevelByTechnicalName($technicalName);
 
-        $levelsToUpdate = $levelRepository->getLevelByTechnicalName($technicalName);
-
-
-
-        $formModel->setTitle($levelsToUpdate->getTitle());
+        $formModel->setTitle($levelToUpdate->getTitle());
         $formModel->setTechnicalName($technicalName);
-        $formModel->setDescription($levelsToUpdate->getDescription());
-        $formModel->setTechnicalName($levelsToUpdate->getTechnicalName());
-        $formModel->setLevelCategory($levelsToUpdate->getLevelCategory());
-        $formModel->setMoreInformation($levelsToUpdate->getMoreInformation());
-        $formModel->setLevelWords($levelsToUpdate-> getLevelWords());
+        $formModel->setDescription($levelToUpdate->getDescription());
+        $formModel->setTechnicalName($levelToUpdate->getTechnicalName());
+        $formModel->setLevelCategory($levelToUpdate->getLevelCategory());
+        $formModel->setMoreInformation($levelToUpdate->getMoreInformation());
+        $formModel->setLevelWords($levelToUpdate-> getLevelWords());
 
         $formType = new LevelType();
 
         $form = $this->createForm($formType, $formModel);
 
         if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
 
+            $flashBag = "notice";
+            $flashBagContent = "";
+
+            if ($form->isValid()) {
+                $parameters = $request->request->all();
+
+                // Recupération des Paramètres du Formulaires
+                $levelTitle         = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['title'];
+                $levelTechnicalName = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['technicalName'];
+                $levelDescription   = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['description'];
+                $levelWords         = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelWords'];
+                $levelmoreInfo      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['moreInformation'];
+                $levelCategory      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelCategory'];
+
+                $levelToUpdate->setTitle($levelTitle);
+                $levelToUpdate->setTechnicalName($levelTechnicalName);
+                $levelToUpdate->setDescription($levelDescription);
+                $levelToUpdate->setLevelWords($levelWords);
+                $levelToUpdate->setLevelCategory( new \MongoId($levelCategory));
+                $levelToUpdate->setMoreInformation($levelmoreInfo);
+
+                $dm->persist($levelToUpdate);
+                $dm->flush($levelToUpdate);
+
+                $flashBagContent = "La niveau " . $technicalName . " a bien été mis à jour";
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "Le formulaire est invalide, veuillez le corriger.";
+            }
+
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
+            );
         }
 
         $result = array(
@@ -232,6 +258,45 @@ class LevelsController extends Controller {
         );
 
         return $result ;
+    }
+
+    /**
+     * @Route(
+     *     "/niveau/associer/{param}/modules",
+     *     name="imagana_resources_creator_levels_associator"
+     * )
+     * @Method({"GET"})
+     * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
+     *
+     */
+    public function levelAssociatorAction(Request $request, $param) {
+
+        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+            $technicalName = $param;
+
+            $associatedResources = "modules";
+
+            $dm = $this->container->get('doctrine_mongodb')->getManager();
+            $modulesRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:Module");
+
+            $modulesCursor = $modulesRepo->getAllActiveModules();
+
+            if ($request->getMethod() == 'POST') {
+
+            }
+
+            $result = array(
+                "route" => "imagana_resources_creator_levels_associator",
+                "previousRoute" => "imagana_resources_creator_level_edit",
+                "previousRouteParamName" => "technicalName",
+                "previousRouteParam" => $technicalName,
+                "ressources" => $associatedResources,
+                "availableResources" => $modulesCursor
+            );
+
+            return $result;
+        }
     }
 
 }

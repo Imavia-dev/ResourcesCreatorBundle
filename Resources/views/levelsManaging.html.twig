@@ -29,12 +29,11 @@
         <tbody>
         {% for niveau in niveaux %}
         <tr>
-
             <td>
-                <a href="{{ path('imagana_resources_creator_level_edit',{"technicalName":niveau.technicalName }) }}"><i class="fa fa-pencil-square-o"></i> {{ niveau.technicalName }}</a>
+                <a href="{{ path('imagana_resources_creator_level_edit',{"param":niveau.technicalName }) }}"><i class="fa fa-pencil-square-o"></i> {{ niveau.technicalName }}</a>
             </td>
             <td>
-               {{ niveau.title}}
+                {{ niveau.title}}
             </td>
             <td>
                 {{ niveau.levelCategory }}
@@ -45,8 +44,6 @@
             <td>
                 {{ niveau.creator }}
             </td>
-
-
         </tr>
         {% endfor %}
         </tbody>
@@ -59,7 +56,7 @@
 {% endblock %}
 
 {% block resourcesCreatorButton %}
-    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_level_create')}}"><i class="icon fa fa-cube"></i> Créer un niveau</a>
+    <a type="button" class="btn btn-primary" href="{{ path('imagana_resources_creator_level_create')}}"><i class="icon fa fa-puzzle-piece"></i> Créer un niveau</a>
 {% endblock %}
 
 {% block javascripts %}

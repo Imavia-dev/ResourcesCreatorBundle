@@ -16,7 +16,6 @@ class LevelRepository  extends DocumentRepository{
     public function getAllActiveLevels()
     {
         return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
-
     }
 
     public function getLevelByTechnicalName($technicalName)

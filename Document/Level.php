@@ -50,9 +50,6 @@ class Level {
 
     /** @ODM\ObjectId
      */
-
-
-
     private $levelCategory ;
 
 

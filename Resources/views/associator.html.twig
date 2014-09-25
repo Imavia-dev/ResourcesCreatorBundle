@@ -39,12 +39,15 @@
             <label>{{ ressources | capitalize }} disponibles</label>
         </div>
         <div class="row">
-            <select name="availableResources" multiple class="col-md-12">
-                <option value="niveau1">niveau1</option>
-                <option value="niveau2">niveau2</option>
-                <option value="niveau3">niveau3</option>
-                <option value="niveau4">niveau4</option>
-            </select>
+            {% if availableResources is defined and availableResources is not empty %}
+                <select name="availableResources" multiple class="col-md-12">
+                {% for resource in availableResources %}
+                    <option value="{{ resource.id }}">{{ resource.title }}</option>
+                {% endfor %}
+                </select>
+            {% else %}
+                <h6>Aucun {{ resources }} trouvés !</h6>
+            {% endif %}
         </div>
     </div>
     <div class="col-md-2">
@@ -66,7 +69,7 @@
 
 {% block resourcesCreatorButton %}
     <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
-    <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute, {"param": previousRouteParam}) }}" ><i class="fa fa-reply"></i> Annuler</a>
 {% endblock %}
 
 {% block javascripts %}

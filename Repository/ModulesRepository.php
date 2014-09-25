@@ -15,4 +15,14 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 
 class ModulesRepository extends DocumentRepository {
 
+    public function getAllActiveModules()
+    {
+        return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
+    }
+
+    public function getModuleByTitle($moduleTitle)
+    {
+        return $this->createQueryBuilder()->field('title')->equals($moduleTitle)->getQuery()->getSingleResult();
+    }
+
 } 
