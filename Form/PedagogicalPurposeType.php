@@ -11,15 +11,14 @@ namespace Imagana\ResourcesCreatorBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class CategoryType extends AbstractType {
+class PedagogicalPurposeType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $fb ,array $options){
         $fb->add('description', 'text', array(
             'required' => true,
-            'label' => "Nom de la catégorie",
-            'attr' => array('placeholder' => 'Nom de la catégorie'),
+            'label' => "Objectif pédagogique",
+            'attr' => array('placeholder' => 'Décrivez l\'objectif pédagogiques'),
         ));
-
         $form = $fb->getForm();
 
         return $form;
@@ -32,7 +31,7 @@ class CategoryType extends AbstractType {
      */
     public function getName()
     {
-       return 'imagana_resourcescreatorbundle_imaganacategorytype';
+       return 'imagana_resourcescreatorbundle_imaganapedagogicalpurposetype';
     }
 
 } 

@@ -1,0 +1,54 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block resourcesCreatorContent %}
+    {% if pedagogicalPurpose is defined and pedagogicalPurpose is not empty %}
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>
+                    <i class="fa fa-wrench"></i> Nom de la catégorie
+                </th>
+                <th>
+                    <i class="fa fa-calendar"></i> Date de création
+                </th>
+                <th>
+                    <i class="fa fa-user"></i> Créateur
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {%  for category in categories  %}
+            <tr>
+                <td>
+                    <a href="{{ path('imagana_resources_creator_category_edit', {'categoryName': category.description}) }}"><i class="fa fa-pencil-square-o"></i> {{  category.description }}</a>
+                </td>
+                <td>
+                   {{ category.creationDate | date("d/m/Y H:i:s", "Europe/Paris") }}
+                </td>
+                <td>
+                    {{ category.creator }}
+
+                </td>
+            </tr>
+
+             {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="alert alert-warning margin-top-md">
+            <i class="icon fa fa-exclamation-circle"></i> <strong>Aucune catégories trouvées !</strong>
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-primary" href="#"><i class="icon fa fa-crosshairs"></i> Créer un objectif pédagogique</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
