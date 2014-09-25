@@ -14,7 +14,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
 /**
  * Class LevelCategory
  * @ODM\Document(
- *     collection="levelCategory",
+ *     collection="LevelCategory",
  *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\LevelCategoryRepository"
  * )
  */

@@ -11,7 +11,13 @@ namespace Imagana\ResourcesCreatorBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
 use Doctrine\Common\Collections\ArrayCollection ;
 
-
+/**
+ * Class Modules
+ * @ODM\Document(
+ *     collection="Modules",
+ *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\ModulesRepository"
+ * )
+ */
 class Modules {
 
     /** @ODM\Id */

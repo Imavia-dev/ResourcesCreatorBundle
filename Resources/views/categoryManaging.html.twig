@@ -30,10 +30,11 @@
 {% block resourcesCreatorButton %}
     <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
     <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
-
     {% if categoryName is defined %}
         <a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
     {% endif %}
+
+
 {% endblock %}
 
 {% block javascripts %}

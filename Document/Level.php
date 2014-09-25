@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection ;
 /**
  * Class Category
  * @ODM\Document(
- *     collection="level",
+ *     collection="Level",
  *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\LevelRepository"
  * )
  */

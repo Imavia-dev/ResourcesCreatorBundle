@@ -119,7 +119,7 @@ class LevelsController extends Controller {
         $form = $this->createForm($formType, $formModel);
 
         $result = array(
-            "tab" => "modules",
+            "tab" => "niveaux",
             "form"=>$form->createView(),
             "route" => "imagana_resources_creator_modules_create",
             "previousRoute" => "imagana_resources_creator_modules_list"

@@ -127,4 +127,29 @@ class ModulesController extends Controller {
         return $result;
     }
 
+    /**
+     * @Route(
+     *     "/module/associer/{moduleName}/{associatedResources}",
+     *     name="imagana_resources_creator_modules_associator"
+     * )
+     * @Method({"GET"})
+     * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
+     *
+     */
+    public function moduleAssociatorAction($moduleName, $associatedResources) {
+
+        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+            $result = array(
+                "route" => "imagana_resources_creator_modules_associator",
+                "previousRoute" => "imagana_resources_creator_modules_list",
+                "ressources" => $associatedResources,
+                ""
+
+            );
+
+            return $result;
+        }
+    }
+
 }
