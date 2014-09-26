@@ -13,4 +13,9 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 
 class PedagogicalPurposeRepository  extends DocumentRepository{
 
+    public function getAllActivePedagogicalPurposes()
+    {
+        return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
+    }
+
 }

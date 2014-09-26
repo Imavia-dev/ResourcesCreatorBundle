@@ -16,7 +16,7 @@ class PedagogicalPurposeModel {
     /**
      * @assert\Length(
      *     min=1,
-     *     max=20,
+     *     max=100,
      *     minMessage="L'objectif pédagogique doit faire plus de {{ limit }} caractères",
      *     maxMessage="L'objectif pédagogique ne doit pas dépasser {{ limit }} caractères",
      * )
@@ -25,42 +25,6 @@ class PedagogicalPurposeModel {
      * @var
      */
     private $description;
-
-    private $creator;
-
-    private $creationDate;
-
-    /**
-     * @param mixed $creationDate
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * @param mixed $creator
-     */
-    public function setCreator($creator)
-    {
-        $this->creator = $creator;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCreator()
-    {
-        return $this->creator;
-    }
 
     /**
      * @param mixed $description
@@ -77,7 +41,5 @@ class PedagogicalPurposeModel {
     {
         return $this->description;
     }
-
-
 
 }

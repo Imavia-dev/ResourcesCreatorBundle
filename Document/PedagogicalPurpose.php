@@ -17,7 +17,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM ;
  * Class Category
  * @ODM\Document(
  *     collection="PedagogicalPurpose",
- *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\PedagogicalPurpose"
+ *     repositoryClass="Imagana\ResourcesCreatorBundle\Repository\PedagogicalPurposeRepository"
  * )
  */
 
@@ -28,6 +28,15 @@ class PedagogicalPurpose {
 
     /** @var  @ODM\String */
     private $description;
+
+    /** @ODM\Date */
+    private $creationDate;
+
+    /** @ODM\String */
+    private $creator;
+
+    /** @ODM\Boolean */
+    private $isActive;
 
     /**
      * @param mixed $description
@@ -59,6 +68,54 @@ class PedagogicalPurpose {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $creationDate
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param mixed $creator
+     */
+    public function setCreator($creator)
+    {
+        $this->creator = $creator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 
 }

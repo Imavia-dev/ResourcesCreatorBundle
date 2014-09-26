@@ -12,3 +12,8 @@ imagana_resources_creator_modules:
     resource: "@ImaganaResourcesCreatorBundle/Controller/ModulesController.php"
     type:     annotation
     prefix:   /
+
+imagana_resources_creator_pedagogicalpurpose:
+    resource: "@ImaganaResourcesCreatorBundle/Controller/PedagogicalPurposeController.php"
+    type:     annotation
+    prefix:   /

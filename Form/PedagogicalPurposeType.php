@@ -17,7 +17,7 @@ class PedagogicalPurposeType extends AbstractType {
         $fb->add('description', 'text', array(
             'required' => true,
             'label' => "Objectif pédagogique",
-            'attr' => array('placeholder' => 'Décrivez l\'objectif pédagogiques'),
+            'attr' => array('placeholder' => 'Décrivez l\'objectif pédagogique'),
         ));
         $form = $fb->getForm();
 

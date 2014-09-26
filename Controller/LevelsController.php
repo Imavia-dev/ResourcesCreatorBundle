@@ -2,35 +2,20 @@
 
 namespace Imagana\ResourcesCreatorBundle\Controller;
 
-use Claroline\CoreBundle\Manager\RoleManager;
-use Claroline\CoreBundle\Manager\UserManager;
 use Imagana\ResourcesCreatorBundle\Document\Level;
-use JMS\Serializer\Tests\Serializer\DateIntervalFormatTest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Validator\ValidatorInterface;
 use Symfony\Component\Routing\RequestContext;
-
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Adapter\MongoAdapter;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
-
-use Claroline\CoreBundle\Library\Configuration\PlatformConfigurationHandler;
-
-use Claroline\CoreBundle\Persistence\ObjectManager;
-
 use JMS\DiExtraBundle\Annotation as DI;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Imagana\ResourcesCreatorBundle\FormModel\LevelModel;
 use Imagana\ResourcesCreatorBundle\Form\LevelType;
 
@@ -43,38 +28,6 @@ use Imagana\ResourcesCreatorBundle\Form\LevelType;
  * @Route("admin/open/ImaganaResourcesCreator")
  */
 class LevelsController extends Controller {
-
-    private $usermanager;
-    private $objectManager;
-    private $userRepo;
-    private $validator;
-    private $configHandler;
-
-    /**
-     * Constructor.
-     *
-     * @DI\InjectParams({
-     *     "um"            = @DI\Inject("claroline.manager.user_manager"),
-     *     "rm"            = @DI\Inject("claroline.manager.role_manager"),
-     *     "objectManager" = @DI\Inject("claroline.persistence.object_manager"),
-     *     "validator"     = @DI\Inject("validator"),
-     *     "configHandler" = @DI\Inject("claroline.config.platform_config_handler"),
-     * })
-     */
-    public function __construct(
-        UserManager $um,
-        RoleManager $rm,
-        ObjectManager $objectManager,
-        ValidatorInterface $validator,
-        PlatformConfigurationHandler $configHandler
-    ) {
-        $this->usermanager = $um;
-        $this->rolemanager = $rm;
-        $this->userRepo = $objectManager->getRepository('ClarolineCoreBundle:User');
-        $this->objectManager = $objectManager;
-        $this->validator = $validator;
-        $this->configHandler = $configHandler;
-    }
 
     /**
      * @Route(
@@ -121,8 +74,6 @@ class LevelsController extends Controller {
 
         $form = $this->createForm($formType, $formModel);
 
-
-
         if($request->getMethod()=="POST"){
             $flashBag="notice" ;
 
@@ -134,12 +85,12 @@ class LevelsController extends Controller {
                 $parameters = $request->request->all();
 
                 // Recupération des Paramètres du Formulaires
-                $levelTitle         = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['title'];
-                $levelTechnicalName = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['technicalName'];
-                $levelDescription   = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['description'];
-                $levelWords         = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelWords'];
-                $levelmoreInfo      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['moreInformation'];
-                $levelCategory      = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelCategory'];
+                $levelTitle           = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['title'];
+                $levelTechnicalName   = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['technicalName'];
+                $levelDescription     = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['description'];
+                $levelWords           = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelWords'];
+                $levelmoreInfo        = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['moreInformation'];
+                $levelCategory        = $parameters['imagana_resourcescreatorbundle_imaganaleveltype']['levelCategory'];
                 $user = $this->container->get('security.context')->getToken()->getUser()->getUsername();
 
                 $newlevel = new Level() ;
@@ -214,7 +165,6 @@ class LevelsController extends Controller {
             $form->handleRequest($request);
 
             $flashBag = "notice";
-            $flashBagContent = "";
 
             if ($form->isValid()) {
                 $parameters = $request->request->all();

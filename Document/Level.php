@@ -48,8 +48,7 @@ class Level {
     /** @ODM\Boolean */
     private $isActive;
 
-    /** @ODM\ObjectId
-     */
+    /** @ODM\ObjectId */
     private $levelCategory ;
 
 
@@ -62,13 +61,11 @@ class Level {
     private $pedagogicalPurpose ;
 
 
-
     public function __construct(){
 
         $this->pedagogicalPurpose=new ArrayCollection();
 
     }
-
 
     /**
      * @param mixed $creationDate
@@ -245,9 +242,5 @@ class Level {
     {
         return $this->isActive;
     }
-
-
-
-
 
 }

@@ -43,6 +43,11 @@ class LevelModel {
     /**
      * @var
      */
+    private $pedagogicalPurpose;
+
+    /**
+     * @var
+     */
     private $description;
 
     /**
@@ -155,6 +160,22 @@ class LevelModel {
     public function getLevelCategory()
     {
         return $this->levelCategory;
+    }
+
+    /**
+     * @param mixed $pedagogicalPurpose
+     */
+    public function setPedagogicalPurpose($pedagogicalPurpose)
+    {
+        $this->pedagogicalPurpose = $pedagogicalPurpose;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPedagogicalPurpose()
+    {
+        return $this->pedagogicalPurpose;
     }
 
 }

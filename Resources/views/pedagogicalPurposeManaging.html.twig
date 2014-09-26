@@ -4,51 +4,48 @@
     {{ parent() }}
 {% endblock %}
 
-{% block resourcesCreatorContent %}
-    {% if pedagogicalPurpose is defined and pedagogicalPurpose is not empty %}
-        <table class="table table-condensed table-hover">
-            <thead>
-            <tr>
-                <th>
-                    <i class="fa fa-wrench"></i> Nom de la catégorie
-                </th>
-                <th>
-                    <i class="fa fa-calendar"></i> Date de création
-                </th>
-                <th>
-                    <i class="fa fa-user"></i> Créateur
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {%  for category in categories  %}
-            <tr>
-                <td>
-                    <a href="{{ path('imagana_resources_creator_category_edit', {'categoryName': category.description}) }}"><i class="fa fa-pencil-square-o"></i> {{  category.description }}</a>
-                </td>
-                <td>
-                   {{ category.creationDate | date("d/m/Y H:i:s", "Europe/Paris") }}
-                </td>
-                <td>
-                    {{ category.creator }}
+{% block resourcesCreatorContentOverride %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice alert alert-success">
+            <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
 
-                </td>
-            </tr>
-
-             {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="alert alert-warning margin-top-md">
-            <i class="icon fa fa-exclamation-circle"></i> <strong>Aucune catégories trouvées !</strong>
-        </p>
-    {% endif %}
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-notice alert alert-danger">
+            <i class="icon fa fa-exclamation-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if moduleTitle is defined %}
+                {{ form_start(form, {'action': path(route,{"param":moduleTitle}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% else %}
+                {{ form_start(form, {'action': path(route), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% endif %}
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block resourcesCreatorButton %}
-    <a type="button" class="btn btn-primary" href="#"><i class="icon fa fa-crosshairs"></i> Créer un objectif pédagogique</a>
+    <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
+
+    {% if moduleTitle is defined %}
+        <a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_modules_associator', {"param": moduleTitle}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>
+        {#<a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>#}
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        $('#submitForm').click(function (event) {
+            event.preventDefault();
+            $("form[id=formResourcesCreatorContent]").submit();
+        });
+    </script>
 {% endblock %}
