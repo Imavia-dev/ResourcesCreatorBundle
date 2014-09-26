@@ -42,7 +42,13 @@
             {% if availableResources is defined and availableResources is not empty %}
                 <select name="availableResources" multiple class="col-md-12">
                 {% for resource in availableResources %}
-                    <option value="{{ resource.id }}">{{ resource.title }}</option>
+                    <option value="{{ resource.id }}">
+                        {% if resource.title is defined %}
+                            {{ resource.title }}
+                        {% elseif resource.description is defined %}
+                            {{ resource.description }}
+                        {% endif %}
+                    </option>
                 {% endfor %}
                 </select>
             {% else %}
@@ -58,8 +64,19 @@
     </div>
     <div class="col-md-5 ">
         <label>{{ ressources | capitalize }} associés</label>
-        <select name="associatedResources" multiple class="col-md-12">
-        </select>
+        <form id="formResourcesCreatorContent" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" method="post" name="imagana_resourcescreatorbundle_imaganaassociator">
+            <select name="associatedResources[]" multiple="multiple" class="col-md-12">
+                {% for resource in associatedResources %}
+                    <option value=""{{ resource.id }}>
+                        {% if resource.title is defined %}
+                            {{ resource.title }}
+                        {% elseif resource.description is defined %}
+                            {{ resource.description }}
+                        {% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
     </div>
 {% endblock %}
 
@@ -75,21 +92,27 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        $('#submitForm').click(function (event) {
+            event.preventDefault();
+            //selectAllItemsInSelectBox($("select[name='associatedResources[]']"));
+            $("form[id=formResourcesCreatorContent]").submit();
+        });
+
         $(".addItems").click(function() {
             var selectedSelectBox = $("select[name='availableResources']");
             var itemsToAdd = getSelectedItems(selectedSelectBox);
 
-            addItemsToSelectBox($("select[name='associatedResources']"), itemsToAdd);
+            addItemsToSelectBox($("select[name='associatedResources[]']"), itemsToAdd);
             removeItemsFromSelectBox(selectedSelectBox, itemsToAdd);
             unselectSelectBox(selectedSelectBox);
             setItemsToSelectedState(itemsToAdd);
         });
 
         $(".removeItems").click(function() {
-            var selectedSelectBox = $("select[name='associatedResources']");
+            var selectedSelectBox = $("select[name='associatedResources[]']");
             var itemsToRemove = getSelectedItems(selectedSelectBox);
 
-            removeItemsFromSelectBox($("select[name='associatedResources']"), itemsToRemove);
+            removeItemsFromSelectBox($("select[name='associatedResources[]']"), itemsToRemove);
             addItemsToSelectBox($("select[name='availableResources']"), itemsToRemove);
             unselectSelectBox(selectedSelectBox);
             setItemsToSelectedState(itemsToRemove);
@@ -103,6 +126,10 @@
 
         var unselectSelectBox = function(selectBox) {
             $("option:selected", selectBox).removeAttr("selected");
+        };
+
+        var selectAllItemsInSelectBox = function(selectBox) {
+            $("option", selectBox).attr("selected", "selected");
         };
 
         var getSelectedItems = function(selectBox) {

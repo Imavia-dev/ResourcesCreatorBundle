@@ -46,6 +46,16 @@ class PedagogicalPurpose {
         $this->description = $description;
     }
 
+    /** @ODM\Collection */
+    private $associatedLevels ;
+
+
+    public function __construct(){
+
+        $this->associatedLevels= Array();
+
+    }
+
     /**
      * @return mixed
      */
@@ -116,6 +126,22 @@ class PedagogicalPurpose {
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * @param mixed $associatedLevels
+     */
+    public function setAssociatedLevels($associatedLevels)
+    {
+        $this->associatedLevels = $associatedLevels;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAssociatedLevels()
+    {
+        return $this->associatedLevels;
     }
 
 }

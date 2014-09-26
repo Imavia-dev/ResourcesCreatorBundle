@@ -2,6 +2,7 @@
 
 namespace Imagana\ResourcesCreatorBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Imagana\ResourcesCreatorBundle\Document\Level;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -212,10 +213,10 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveau/associer/{param}/modules",
+     *     "/niveau/associer/{param}/objectifs",
      *     name="imagana_resources_creator_levels_associator"
      * )
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
      *
      */
@@ -223,26 +224,49 @@ class LevelsController extends Controller {
 
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-            $technicalName = $param;
+            $levelTechnicalDescription = $param;
 
-            $associatedResources = "modules";
+            $associatedResources = "objectifs";
 
             $dm = $this->container->get('doctrine_mongodb')->getManager();
-            $modulesRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:Module");
+            $pedagogicalPurposeRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:PedagogicalPurpose");
+            $levelRepository = $dm->getRepository("ImaganaResourcesCreatorBundle:Level");
+            $levelToUpdate = $levelRepository->getLevelByTechnicalName($levelTechnicalDescription);
 
-            $modulesCursor = $modulesRepo->getAllActiveModules();
+            $pedagogicalPurposeCursor = $pedagogicalPurposeRepo->getAllActivePedagogicalPurposes();
+
+            $alreadyAssociatedpedagogicalPurposeCursor = $levelToUpdate->getPedagogicalPurpose();
+
+
 
             if ($request->getMethod() == 'POST') {
+                // Récupération des paramètres du formulaires
+                $parameters = $request->request->all();
 
+                $pedadogicalPurposeAssociatedResources = array();
+
+                for($i=0;$i<count($parameters['associatedResources']);$i++) {
+                    $pedagogicalPurposeMongoId = new \MongoId($parameters['associatedResources'][$i]);
+                    $pedadogicalPurposeAssociatedResources[] = $pedagogicalPurposeMongoId;
+
+                    $pedagogicalPurposeToUpdate = $pedagogicalPurposeRepo->getPedagogicalPurposeById($pedagogicalPurposeMongoId);
+                    $pedagogicalPurposeToUpdate->set();
+                }
+
+                $levelToUpdate->setPedagogicalPurpose($pedadogicalPurposeAssociatedResources);
+
+                $dm->persist($levelToUpdate);
+                $dm->flush($levelToUpdate);
             }
 
             $result = array(
                 "route" => "imagana_resources_creator_levels_associator",
                 "previousRoute" => "imagana_resources_creator_level_edit",
                 "previousRouteParamName" => "technicalName",
-                "previousRouteParam" => $technicalName,
+                "previousRouteParam" => $levelTechnicalDescription,
                 "ressources" => $associatedResources,
-                "availableResources" => $modulesCursor
+                "availableResources" => $pedagogicalPurposeCursor,
+                "associatedResources" => $alreadyAssociatedpedagogicalPurposeCursor
             );
 
             return $result;

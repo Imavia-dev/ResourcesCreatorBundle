@@ -24,7 +24,7 @@
             {%  for objectif in objectifs  %}
             <tr>
                 <td>
-                    <a href="{{ path('imagana_resources_creator_category_edit', {'categoryName': objectif.description}) }}"><i class="fa fa-pencil-square-o"></i> {{  objectif.description }}</a>
+                    <a href="{{ path('imagana_resources_creator_pedagogicalpurpose_edit', {'param': objectif.description}) }}"><i class="fa fa-pencil-square-o"></i> {{  objectif.description }}</a>
                 </td>
                 <td>
                    {{ objectif.creationDate | date("d/m/Y H:i:s", "Europe/Paris") }}

@@ -18,8 +18,8 @@
     {% endfor %}
     <div class="row">
         <div class="col-md-12">
-            {% if moduleTitle is defined %}
-                {{ form_start(form, {'action': path(route,{"param":moduleTitle}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
+            {% if pedagogicalPurposeDescription is defined %}
+                {{ form_start(form, {'action': path(route,{"param":pedagogicalPurposeDescription}), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
             {% else %}
                 {{ form_start(form, {'action': path(route), 'method': 'POST' , 'attr': {'id': 'formResourcesCreatorContent'} }) }}
             {% endif %}
@@ -34,9 +34,9 @@
     <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
     <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
 
-    {% if moduleTitle is defined %}
-        <a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_modules_associator', {"param": moduleTitle}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>
-        {#<a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>#}
+    {% if pedagogicalPurposeDescription is defined %}
+        <a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_pedagogicalpurposes_associator', {"param": pedagogicalPurposeDescription}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>
+        <a type="button" class="btn btn-danger pull-right" href="" ><i class="fa fa-trash-o"></i> Supprimer</a>
     {% endif %}
 {% endblock %}
 

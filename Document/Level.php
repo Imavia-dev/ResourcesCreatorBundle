@@ -52,18 +52,13 @@ class Level {
     private $levelCategory ;
 
 
-    /** @ODM\ReferenceMany(
-     *      strategy="addToSet",
-     *      cascade="all",
-     *      targetDocument="PedagogicalPurpose"
-     * )
-     */
+    /** @ODM\Collection */
     private $pedagogicalPurpose ;
 
 
     public function __construct(){
 
-        $this->pedagogicalPurpose=new ArrayCollection();
+        $this->pedagogicalPurpose= Array();
 
     }
 
@@ -198,7 +193,7 @@ class Level {
     /**
      * @param mixed $pedagogicalPurpose
      */
-    public function setPedagogicalPurpose(ArrayCollection $pedagogicalPurpose)
+    public function setPedagogicalPurpose($pedagogicalPurpose)
     {
         $this->pedagogicalPurpose = $pedagogicalPurpose;
     }

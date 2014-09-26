@@ -202,7 +202,7 @@ class ModulesController extends Controller {
      *     "/module/associer/{param}/niveaux",
      *     name="imagana_resources_creator_modules_associator"
      * )
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
      *
      */
