@@ -38,22 +38,20 @@ class PedagogicalPurpose {
     /** @ODM\Boolean */
     private $isActive;
 
+    /** @ODM\Collection */
+    private $associatedLevels;
+
+
+    public function __construct(){
+        $this->associatedLevels= Array();
+    }
+
     /**
      * @param mixed $description
      */
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /** @ODM\Collection */
-    private $associatedLevels ;
-
-
-    public function __construct(){
-
-        $this->associatedLevels= Array();
-
     }
 
     /**

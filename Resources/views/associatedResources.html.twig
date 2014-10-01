@@ -1,0 +1,35 @@
+<div class="col-md-3">
+    <label>{{ resourceTypeName | capitalize }} associés</label>
+</div>
+<div class="col-md-9">
+    <table class="table-bordered table-condensed">
+        <tbody>
+        {% if associatedResources is defined and associatedResources is not empty %}
+            {% for resource in associatedResources %}
+                <tr>
+                    <td>
+                        <i class="fa fa-crosshairs"></i> {{ resource.description }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td>
+                    <div class="alert alert-warning">
+                        <i class="icon fa fa-exclamation-triangle"></i> Aucun {{ resourceTypeName }} n'est actuellement
+                        associé
+                    </div>
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>
+                <a class="btn btn-warning pull-right btn-xs"
+                   href="{{ path('imagana_resources_creator_levels_associator', {'levelTechnicalName': levelTechnicalName}) }}"><i
+                            class="fa fa-pencil-square-o"></i> Modifier les {{ resourceTypeName }} associés</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>

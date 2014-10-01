@@ -35,7 +35,7 @@
     <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
 
     {% if pedagogicalPurposeDescription is defined %}
-        <a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_pedagogicalpurposes_associator', {"param": pedagogicalPurposeDescription}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>
+        {#<a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_pedagogicalpurposes_associator', {"param": pedagogicalPurposeDescription}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>#}
         <a type="button" class="btn btn-danger pull-right" href="" ><i class="fa fa-trash-o"></i> Supprimer</a>
     {% endif %}
 {% endblock %}

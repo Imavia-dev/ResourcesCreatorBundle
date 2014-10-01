@@ -4,7 +4,6 @@ namespace Imagana\ResourcesCreatorBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Imagana\ResourcesCreatorBundle\Document\Level;
-use Imagana\ResourcesCreatorBundle\Document\LevelPedagogicalPurpose;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
@@ -29,7 +28,7 @@ use Imagana\ResourcesCreatorBundle\Form\LevelType;
 /**
  * @Route("admin/open/ImaganaResourcesCreator")
  */
-class LevelsController extends Controller {
+class LevelsControllerBackup extends Controller {
 
     /**
      * @Route(
@@ -212,130 +211,106 @@ class LevelsController extends Controller {
         return $result ;
     }
 
-
     /**
      * @Route(
-     *     "/niveau/liste/association/{levelTechnicalName}",
-     *     name="imagana_resources_creator_levels_associated_resources"
-     * )
-     * @Method("GET")
-     * @Template("ImaganaResourcesCreatorBundle::associatedResources.html.twig")
-     */
-    public function renderAssociatedResourcesAction($levelTechnicalName) {
-        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
-
-            $dm = $this->container->get('doctrine_mongodb')->getManager();
-
-            $levelsRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
-            $levelId = $levelsRepository->getLevelByTechnicalName($levelTechnicalName)->getId();
-
-            $levelPedagogicalPurposeRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelPedagogicalPurpose');
-            $associatedPedagogicalPurposesIdsArray = $levelPedagogicalPurposeRepository->getAllPedagogicalPurposeByLevelId(new \MongoId($levelId));
-
-            $associatedPedagogicalPurposesArray = array();
-
-            while($associatedPedagogicalPurposesIdsArray->hasNext()) {
-                $apr = $associatedPedagogicalPurposesIdsArray->getNext();
-
-                $associatedPedagogicalPurposesArray[] = $apr->getpedagogicalPurposeid();
-            }
-
-            $pedagogicalPurposeRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:PedagogicalPurpose');
-
-            if($associatedPedagogicalPurposesArray != null) {
-                $associatedPedagogicalPurposes = $pedagogicalPurposeRepository->getAllPedagogicalPurposesByIdsArray($associatedPedagogicalPurposesArray);
-            } else {
-                $associatedPedagogicalPurposes = "";
-            }
-
-            $result = array(
-                "associatedResources" => $associatedPedagogicalPurposes,
-                "resourceTypeName" => "objectifs pédagogiques",
-                "levelTechnicalName" => $levelTechnicalName
-            );
-
-            return $result;
-        }
-    }
-
-
-
-    /**
-     * @Route(
-     *     "/niveau/associer/{levelTechnicalName}/objectifs",
+     *     "/niveau/associer/{param}/objectifs",
      *     name="imagana_resources_creator_levels_associator"
      * )
      * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
      *
      */
-    public function levelAssociatorAction(Request $request, $levelTechnicalName) {
+    public function levelAssociatorAction(Request $request, $param) {
 
-        $dm = $this->container->get('doctrine_mongodb')->getManager();
+        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-        $pedagogicalPurposeRepository = $dm->getRepository("ImaganaResourcesCreatorBundle:PedagogicalPurpose");
+            $levelTechnicalDescription = $param;
 
-        $levelsRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
-        $levelId = $levelsRepository->getLevelByTechnicalName($levelTechnicalName)->getId();
+            $associatedResources = "objectifs";
 
-        $levelPedagogicalPurposeRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelPedagogicalPurpose');
+            $dm = $this->container->get('doctrine_mongodb')->getManager();
+            $pedagogicalPurposeRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:PedagogicalPurpose");
+            $levelRepository = $dm->getRepository("ImaganaResourcesCreatorBundle:Level");
+            $levelToUpdate = $levelRepository->getLevelByTechnicalName($levelTechnicalDescription);
 
-        if ($request->getMethod() == 'POST') {
-            // Récupération des paramètres du formulaires
-            $parameters = $request->request->all();
+            $pedagogicalPurposeCursor = $pedagogicalPurposeRepo->getAllActivePedagogicalPurposes();
 
-            $action = $parameters['formAction'];
+            $alreadyAssociatedPedagogicalPurposeCursor = $levelToUpdate->getPedagogicalPurpose();
 
-            for($i=0;$i<count($parameters['formResources']);$i++) {
-                // MongoId de l'objectif pédagogique à ajouter au niveau sélectionné
-                $pedagogicalPurposeMongoId = new \MongoId($parameters['formResources'][$i]);
 
-                if($action == "delete") {
-                    $newLevelPedagogicalPurpose = $levelPedagogicalPurposeRepository->getPedagogicalPurposeByLevelIdAndPurposeId(new \MongoId($levelId), $pedagogicalPurposeMongoId);
+            $alreadyAssociatedPedagogicalPurposeArray = array();
 
-                    $dm->remove($newLevelPedagogicalPurpose);
-                    $dm->flush();
-                } else {
-                    $newLevelPedagogicalPurpose = new LevelPedagogicalPurpose();
-                    $newLevelPedagogicalPurpose->setLevelId(new \MongoId($levelId));
-                    $newLevelPedagogicalPurpose->setPedagogicalPurposeId($pedagogicalPurposeMongoId);
+            /*for($i=0;$i<count($alreadyAssociatedPedagogicalPurposeCursor);$i++) {
+               // $associatedPedagogicalPurpose = $pedagogicalPurposeRepo->getPedagogicalPurposeById($alreadyAssociatedPedagogicalPurposeCursor[$i]['id']);
 
-                    $dm->persist($newLevelPedagogicalPurpose);
-                    $dm->flush($newLevelPedagogicalPurpose);
-                }
+                var_dump($alreadyAssociatedPedagogicalPurposeCursor[$i]);
+            }*/
+
+            foreach($alreadyAssociatedPedagogicalPurposeCursor as $pedagogicalpurpose => $value) {
+//                $alreadyAssociatedPedagogicalPurposeArray[] = $pedagogicalpurpose.
+
+                var_dump($value);
             }
+
+            $levelToUpdate->set();
+
+            if ($request->getMethod() == 'POST') {
+                // Récupération des paramètres du formulaires
+                $parameters = $request->request->all();
+
+                $pedadogicalPurposeAssociatedResources = array();
+
+                for($i=0;$i<count($parameters['associatedResources']);$i++) {
+                    // MongoId de l'objectif pédagogique à ajouter au niveau sélectionné
+                    $pedagogicalPurposeMongoId = new \MongoId($parameters['associatedResources'][$i]);
+
+                    // Ajout du MongoId au tableau de ressources associées du niveau
+                    $pedadogicalPurposeAssociatedResources[] = $pedagogicalPurposeMongoId;
+
+                    // Récupération de l'objectif pédagogique par ID
+                    $pedagogicalPurposeToUpdate = $pedagogicalPurposeRepo->getPedagogicalPurposeById($pedagogicalPurposeMongoId);
+
+                    $associatedLevels = $pedagogicalPurposeToUpdate->getAssociatedLevels();
+
+                    $levelToUpdateMongoId = new \MongoId($levelToUpdate->getId());
+
+                    if($associatedLevels == null) {
+                        $newAssociatedLevels = array($levelToUpdateMongoId);
+                    } else {
+                        if(!in_array($levelToUpdateMongoId,$associatedLevels)) {
+                            $newAssociatedLevels = $associatedLevels;
+                            $newAssociatedLevels[] = $levelToUpdateMongoId;
+                        }
+                    }
+
+                    if(isset($newAssociatedLevels)){
+                        $pedagogicalPurposeToUpdate->setAssociatedLevels($newAssociatedLevels);
+
+                        $dm->persist($pedagogicalPurposeToUpdate);
+                        $dm->flush($pedagogicalPurposeToUpdate);
+                    }
+                }
+
+                // Redéfini la liste des objectifs pédagogiques associés au niveau
+                $levelToUpdate->setPedagogicalPurpose($pedadogicalPurposeAssociatedResources);
+
+                $dm->persist($levelToUpdate);
+                $dm->flush($levelToUpdate);
+            }
+
+            $result = array(
+                "route" => "imagana_resources_creator_levels_associator",
+                "previousRoute" => "imagana_resources_creator_level_edit",
+                "previousRouteParamName" => "technicalName",
+                "previousRouteParam" => $levelTechnicalDescription,
+                "ressources" => $associatedResources,
+                "availableResources" => $pedagogicalPurposeCursor,
+                //"associatedResources" => $alreadyAssociatedPedagogicalPurposeCursor
+                "associatedResources" => ""
+            );
+
+            return $result;
         }
-
-        $associatedPedagogicalPurposesIds = $levelPedagogicalPurposeRepository->getAllPedagogicalPurposeByLevelId(new \MongoId($levelId));
-
-        $associatedPedagogicalPurposesArray = array();
-
-        while($associatedPedagogicalPurposesIds->hasNext()) {
-            $apr = $associatedPedagogicalPurposesIds->getNext();
-
-            $associatedPedagogicalPurposesArray[] = $apr->getpedagogicalPurposeid();
-        }
-
-        if($associatedPedagogicalPurposesArray != null) {
-            $associatedPedagogicalPurposes = $pedagogicalPurposeRepository->getAllPedagogicalPurposesByIdsArray($associatedPedagogicalPurposesArray);
-
-            $pedagogicalPurposeCursor = $pedagogicalPurposeRepository->getAllActivePedagogicalPurposesExcept($associatedPedagogicalPurposesArray);
-        } else {
-            $associatedPedagogicalPurposes = "";
-            $pedagogicalPurposeCursor = $pedagogicalPurposeRepository->getAllActivePedagogicalPurposes();
-        }
-
-        $result = array(
-            "route" => "imagana_resources_creator_levels_associator",
-            "previousRoute" => "imagana_resources_creator_level_edit",
-            "previousRouteParamName" => "technicalName",
-            //"previousRouteParam" => $levelTechnicalDescription,
-            "ressources" => "Objectifs pédagogiques",
-            "availableResources" => $pedagogicalPurposeCursor,
-            "associatedResources" => $associatedPedagogicalPurposes
-        );
-
-        return $result;
     }
 
 }

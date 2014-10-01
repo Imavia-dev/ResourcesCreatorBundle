@@ -1,0 +1,196 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        select {
+            font-family:'FontAwesome', 'Helvetica', 'Arial';
+        }
+
+        .addItems:hover, .removeItems:hover {
+            cursor: pointer;
+        }
+
+        .removeItems {
+            color: #D9534F;
+        }
+
+        .removeItems:hover {
+            color: #C9302C;
+        }
+
+        .addItems {
+            color: #5CB85C;
+        }
+
+        .addItems:hover {
+            color: #449D44;
+        }
+    </style>
+{% endblock %}
+
+{% block panelTitle %}
+    <i class="icon fa fa-cubes"></i> ImaganaResourcesCreator <small>Outil de création de ressources pour Imagana</small>
+{% endblock %}
+
+{% block resourcesCreatorContentOverride %}
+    <div class="col-md-5 ">
+        <div class="row">
+            <label>{{ ressources | capitalize }} disponibles</label>
+        </div>
+        <div class="row">
+            {% if availableResources is defined and availableResources is not empty %}
+                <select name="availableResources" multiple class="col-md-12">
+                {% for resource in availableResources %}
+                    <option value="{{ resource.id }}">
+                        {% if resource.title is defined %}
+                            {{ resource.title }}
+                        {% elseif resource.description is defined %}
+                            {{ resource.description }}
+                        {% endif %}
+                    </option>
+                {% endfor %}
+                </select>
+            {% else %}
+                <h6>Aucun {{ resources }} trouvés !</h6>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="text-center">
+            <i class="fa fa-chevron-circle-left fa-2x removeItems"></i>
+            <i class="fa fa-chevron-circle-right fa-2x addItems"></i>
+        </div>
+    </div>
+    <div class="col-md-5 ">
+        <label>{{ ressources | capitalize }} associés</label>
+        <form id="formResourcesCreatorContent" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" method="post" name="imagana_resourcescreatorbundle_imaganaassociator">
+            <select name="associatedResources[]" multiple="multiple" class="col-md-12">
+                {% if associatedResources is defined and associatedResources is not empty %}
+                    {% for resource in associatedResources %}
+                        <option value=""{{ resource.id }}>
+                            {% if resource.title is defined %}
+                                {{ resource.title }}
+                            {% elseif resource.description is defined %}
+                                {{ resource.description }}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </form>
+    </div>
+{% endblock %}
+
+{% block resourcesCreatorContent %}
+
+{% endblock %}
+
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute, {"param": previousRouteParam}) }}" ><i class="fa fa-reply"></i> Annuler</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#submitForm').click(function (event) {
+            event.preventDefault();
+            //selectAllItemsInSelectBox($("select[name='associatedResources[]']"));
+            $("form[id=formResourcesCreatorContent]").submit();
+        });
+
+        $(".addItems").click(function() {
+            var selectedSelectBox = $("select[name='availableResources']");
+            var itemsToAdd = getSelectedItems(selectedSelectBox);
+
+            addItemsToSelectBox($("select[name='associatedResources[]']"), itemsToAdd);
+            removeItemsFromSelectBox(selectedSelectBox, itemsToAdd);
+            unselectSelectBox(selectedSelectBox);
+            setItemsToSelectedState(itemsToAdd);
+        });
+
+        $(".removeItems").click(function() {
+            var selectedSelectBox = $("select[name='associatedResources[]']");
+            var itemsToRemove = getSelectedItems(selectedSelectBox);
+
+            removeItemsFromSelectBox($("select[name='associatedResources[]']"), itemsToRemove);
+            addItemsToSelectBox($("select[name='availableResources']"), itemsToRemove);
+            unselectSelectBox(selectedSelectBox);
+            setItemsToSelectedState(itemsToRemove);
+        });
+
+        $("select").change(function() {
+            $("select").not(this).each(function() {
+                unselectSelectBox($( this ));
+            });
+        })
+
+        var unselectSelectBox = function(selectBox) {
+            $("option:selected", selectBox).removeAttr("selected");
+        };
+
+        var selectAllItemsInSelectBox = function(selectBox) {
+            $("option", selectBox).attr("selected", "selected");
+        };
+
+        var getSelectedItems = function(selectBox) {
+            var selectedResources = [];
+
+            $("option:selected", selectBox).each(function() {
+                var newSelectedResources = [$( this ).val(), $( this ).text()];
+                selectedResources.push(newSelectedResources);
+            });
+
+            return selectedResources;
+        };
+
+        var addItemsToSelectBox = function(selectBox, itemsArray) {
+            jQuery.each(itemsArray, function(i, val) {
+                if(findItemByValueInSelectBox(selectBox, val[0]) > 0) {
+                    console.warn("Impossible d'ajouter " + val[0] + " à la selectBox " + selectBox.attr("name") + " car cet élément existe déjà !");
+
+                    // @TODO ajouter un flashbag pour l'utilisateur
+                } else {
+                    selectBox.append($('<option>', {
+                        value: val[0],
+                        text : val[1]
+                    }));
+
+                }
+            });
+        };
+
+        var removeItemsFromSelectBox = function(selectBox, itemsArray) {
+            jQuery.each(itemsArray, function(i, val) {
+                $("option[value='" + val[0] + "']", selectBox).remove();
+            });
+        };
+
+        var findItemByValueInSelectBox = function(selectBox, itemValueTofind) {
+            return $("option[value='" + itemValueTofind +"']", selectBox).length
+        };
+
+        var setItemsToSelectedState = function(items) {
+            jQuery.each(items, function(i, val) {
+                $("option[value='" + val[0] +"']").attr("selected", true);
+            });
+        };
+
+        // TEST pour ajouter une icone "check" lorsque la ressources est déplacée dans la rubrique "associé"
+       /* var addChainedIconToSelectedItems = function(selectBox) {
+            console.log("entrée dans la fonction addChainedIconToSelectedItems");
+            console.log(selectBox);
+
+            var chainedIcon = "&#xf0c1; ";
+
+            jQuery.each($("option:selected", selectBox), function(i, val) {
+                var textWithIcon = chainedIcon + $( this ).text();
+
+                console.log($( this ).text());
+
+                $( this ).text(textWithIcon);
+            });
+        };*/
+    </script>
+{% endblock %}

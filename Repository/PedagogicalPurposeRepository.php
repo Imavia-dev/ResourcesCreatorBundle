@@ -18,6 +18,11 @@ class PedagogicalPurposeRepository  extends DocumentRepository{
         return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
     }
 
+    public function getAllActivePedagogicalPurposesExcept($exceptionIdsArray)
+    {
+        return $this->createQueryBuilder()->field('_id')->notIn($exceptionIdsArray)->getQuery()->execute();
+    }
+
     public function getPedagogicalPurposeByDescription($PedagogicalPurposesDescription)
     {
         return $this->createQueryBuilder()->field('description')->equals($PedagogicalPurposesDescription)->getQuery()->getSingleResult();
@@ -25,6 +30,10 @@ class PedagogicalPurposeRepository  extends DocumentRepository{
 
     public function getPedagogicalPurposeById($PedagogicalPurposeId) {
         return $this->createQueryBuilder()->field('_id')->equals($PedagogicalPurposeId)->getQuery()->getSingleResult();
+    }
+
+    public function getAllPedagogicalPurposesByIdsArray($idsArray) {
+        return $this->createQueryBuilder()->field('_id')->in($idsArray)->getQuery()->execute();
     }
 
 }

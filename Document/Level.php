@@ -51,15 +51,12 @@ class Level {
     /** @ODM\ObjectId */
     private $levelCategory ;
 
-
     /** @ODM\Collection */
     private $pedagogicalPurpose ;
 
 
     public function __construct(){
-
         $this->pedagogicalPurpose= Array();
-
     }
 
     /**
