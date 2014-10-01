@@ -24,9 +24,7 @@
         {% endif %}
         <tr>
             <td>
-                <a class="btn btn-warning pull-right btn-xs"
-                   href="{{ path('imagana_resources_creator_levels_associator', {'levelTechnicalName': levelTechnicalName}) }}"><i
-                            class="fa fa-pencil-square-o"></i> Modifier les {{ resourceTypeName }} associés</a>
+                <a class="btn btn-warning pull-right btn-xs" href="{{ path(associatorRoute, {'paramResourceName': paramResourceName}) }}"><i class="fa fa-pencil-square-o"></i> Modifier les {{ resourceTypeName }} associés</a>
             </td>
         </tr>
         </tbody>

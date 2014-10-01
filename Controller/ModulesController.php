@@ -2,6 +2,7 @@
 
 namespace Imagana\ResourcesCreatorBundle\Controller;
 
+use Imagana\ResourcesCreatorBundle\Document\LevelModule;
 use Imagana\ResourcesCreatorBundle\Document\Module;
 use Imagana\ResourcesCreatorBundle\Form\ModuleType;
 use Imagana\ResourcesCreatorBundle\FormModel\ModuleModel;
@@ -111,14 +112,15 @@ class ModulesController extends Controller {
                 $flashBagContent
             );
 
+            $result = $this->redirect($this->generateUrl('imagana_resources_creator_modules_list'));
+        } else {
+            $result = array(
+                "tab" => "modules",
+                "form"=>$form->createView(),
+                "route" => "imagana_resources_creator_modules_create",
+                "previousRoute" => "imagana_resources_creator_modules_list"
+            );
         }
-
-        $result = array(
-            "tab" => "modules",
-            "form"=>$form->createView(),
-            "route" => "imagana_resources_creator_modules_create",
-            "previousRoute" => "imagana_resources_creator_modules_list"
-        );
 
         return $result;
     }
@@ -199,40 +201,239 @@ class ModulesController extends Controller {
 
     /**
      * @Route(
-     *     "/module/associer/{param}/niveaux",
+     *     "/module/liste/association/{paramResourceName}",
+     *     name="imagana_resources_creator_modules_associated_resources"
+     * )
+     * @Method("GET")
+     * @Template("ImaganaResourcesCreatorBundle::associatedResources.html.twig")
+     */
+    public function renderAssociatedResourcesAction($paramResourceName) {
+        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+            $moduleName = $paramResourceName;
+
+            // Récupération de l'entity manager
+            $dm = $this->container->get('doctrine_mongodb')->getManager();
+
+
+            // Récupération du repository des modules
+            $moduleRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Module');
+
+            // Récupération du moduleId en fonction du moduleName
+            $moduleId = $moduleRepository->getModuleByTitle($moduleName)->getId();
+
+
+
+            // Récupération du repository des levelmodule
+            $levelModuleRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelModule');
+
+            // Récupération des niveaux liés au module
+            $associatedLevelsIdsCursor =  $levelModuleRepository->getAllLevelByModuleId(new \MongoId($moduleId));
+
+            // Instantiation d'un tableau vide qui contiendra les ids des niveaux liés
+            $associatedLevelsIdsArray = array();
+
+            // Parcours du curseur mongo
+            while($associatedLevelsIdsCursor->hasNext()) {
+                // Récupère la valeur du niveau associé à ce stade d'itération
+                $al = $associatedLevelsIdsCursor->getNext();
+
+                // Ajoute l'id du niveau associé dans le tableau d'ids
+                $associatedLevelsIdsArray[] = $al->getLevelId();
+            }
+
+            // Récupération du repository des levels
+            $levelRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
+
+            // Vérifie que le tableau d'ids n'est pas vide
+            if($associatedLevelsIdsArray != null) {
+                $associatedLevels = $levelRepository->getAllLevelsByIdsArray($associatedLevelsIdsArray);
+            } else {
+                $associatedLevels = "";
+            }
+
+
+
+            // Tableau à renvoyer à la vue
+            $result = array(
+                "associatedResources" => $associatedLevels,
+                "resourceTypeName" => "niveaux",
+                "paramResourceName" => $paramResourceName,
+                "associatorRoute" => "imagana_resources_creator_modules_associator"
+            );
+
+            // Retourne le tableau à la vue
+            return $result;
+
+        }
+    }
+
+
+    /**
+     * @Route(
+     *     "/module/associer/{paramResourceName}/niveaux",
      *     name="imagana_resources_creator_modules_associator"
      * )
      * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
      *
      */
-    public function moduleAssociatorAction(Request $request, $param) {
-        if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+    public function moduleAssociatorAction(Request $request, $paramResourceName) {
 
-            $moduleName = $param;
+        // Récupère le nom du module depuis le slug de la route
+        $moduleName = $paramResourceName;
 
-            $associatedResources = "niveaux";
+        // Récupération de l'entity manager
+        $dm = $this->container->get('doctrine_mongodb')->getManager();
 
-            $dm = $this->container->get('doctrine_mongodb')->getManager();
-            $levelsRepo = $dm->getRepository("ImaganaResourcesCreatorBundle:Level");
 
-            $levelsCursor = $levelsRepo->getAllActiveLevels();
+        // Récupération du repository des modules
+        $moduleRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Module');
 
-            if ($request->getMethod() == 'POST') {
+        // Récupération du moduleId en fonction du moduleName
+        $moduleId = $moduleRepository->getModuleByTitle($moduleName)->getId();
 
+        // Récupération du repository des levelmodule
+        $levelModuleRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelModule');
+
+        // Vérifie si la méthode est POST
+        if ($request->getMethod() == 'POST') {
+            // Récupération des paramètres du formulaires
+            $parameters = $request->request->all();
+
+            // Récupération du paramètre action
+            $action = $parameters['formAction'];
+
+
+            // Parcours des ressources passées en paramètres
+            for($i=0;$i<count($parameters['formResources']);$i++) {
+
+                // MongoId du niveau à ajouter au module sélectionné
+                $levelId = new \MongoId($parameters['formResources'][$i]);
+
+                // Vérifie si l'action est supprimer
+                if($action == "delete") {
+                    // Récupère le document à supprimer par levelId et moduleId
+                    $newLevelModule = $levelModuleRepository->getLevelModuleByLevelIdAndModuleId($levelId, new \MongoId($moduleId));
+
+                    // Supprime le document
+                    $dm->remove($newLevelModule);
+                    // Flush
+                    $dm->flush();
+                } else {
+                    // Créer un nouveau document LevelModule
+                    $newLevelModule = new LevelModule();
+
+                    // Set le levelId
+                    $newLevelModule->setLevelId($levelId);
+
+                    // Set le moduleId
+                    $newLevelModule->setModuleId(new \MongoId($moduleId));
+
+                    // Persiste le document
+                    $dm->persist($newLevelModule);
+                    // Flush
+                    $dm->flush($newLevelModule);
+                }
+            }
+        }
+
+
+        // Récupération des niveaux liés au module
+        $associatedLevelsIdsCursor =  $levelModuleRepository->getAllLevelByModuleId(new \MongoId($moduleId));
+
+        // Instantiation d'un tableau vide qui contiendra les ids des niveaux liés
+        $associatedLevelsIdsArray = array();
+
+        // Parcours du curseur mongo
+        while($associatedLevelsIdsCursor->hasNext()) {
+            // Récupère la valeur du niveau associé à ce stade d'itération
+            $aL = $associatedLevelsIdsCursor->getNext();
+
+            // Ajoute l'id du niveau associé dans le tableau d'ids
+            $associatedLevelsIdsArray[] = $aL->getLevelId();
+        }
+
+        // Récupération du repository des levels
+        $levelRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
+
+        // Vérifie que le tableau d'ids n'est pas vide
+        if($associatedLevelsIdsArray != null) {
+            $associatedLevels = $levelRepository->getAllLevelsByIdsArray($associatedLevelsIdsArray);
+
+            $levelCursor = $levelRepository->getAllActiveLevelsExcept($associatedLevelsIdsArray);
+        } else {
+            $associatedLevels = "";
+
+            $levelCursor = $levelRepository->getAllActiveLevels();
+        }
+
+        // Tableau à renvoyer à la vue
+        $result = array(
+            "route" => "imagana_resources_creator_modules_associator",
+            "previousRoute" => "imagana_resources_creator_module_edit",
+            "previousRouteParamName" => "param",
+            "previousRouteParam" => $moduleName,
+            "ressources" => "Niveaux",
+            "availableResources" => $levelCursor,
+            "associatedResources" => $associatedLevels
+        );
+
+        // Retourne le tableau à la vue
+        return $result;
+    }
+
+    /**
+     * @Route(
+     *     "/module/supprimer/{paramResourceName}",
+     *     name="imagana_resources_creator_modules_deletor"
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::deletor.html.twig")
+     *
+     */
+    public function moduleDeletorAction(Request $request, $paramResourceName) {
+        $result = array(
+            "previousRoute" => "imagana_resources_creator_module_edit",
+            "previousRouteParam" => $paramResourceName,
+        );
+
+        if ($request->getMethod() == 'POST') {
+            $flashBag="notice" ;
+
+            // Récupération des paramètres du formulaires
+            $parameters = $request->request->all();
+
+            $confirmInput = $parameters['deleteConfirm'];
+
+            if($confirmInput == $paramResourceName) {
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
+                $modulesRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Module');
+                $moduleToDelete = $modulesRepository->getModuleByTitle($paramResourceName);
+
+                if($moduleToDelete != null) {
+                    $moduleToDelete->setIsactive(false);
+                    $dm->persist($moduleToDelete);
+                    $dm->flush($moduleToDelete);
+
+                    $flashBagContent = "Le module \"" . $paramResourceName . "\" a bien été supprimé";
+                    $result = $this->redirect($this->generateUrl('imagana_resources_creator_modules_list'));
+                } else {
+                    $flashBag = "error";
+                    $flashBagContent = "Le module \"" . $paramResourceName . "\" est introuvable";
+                }
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "La saisie du champ de confirmation est incorrecte ! Veuillez recommencer.";
             }
 
-            $result = array(
-                "route" => "imagana_resources_creator_modules_associator",
-                "previousRoute" => "imagana_resources_creator_module_edit",
-                "previousRouteParamName" => "moduleTitle",
-                "previousRouteParam" => $moduleName,
-                "ressources" => $associatedResources,
-                "availableResources" => $levelsCursor
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
             );
-
-            return $result;
         }
+
+        return $result;
     }
 
 }

@@ -4,7 +4,7 @@
     {{ parent() }}
 {% endblock %}
 
-{% block resourcesCreatorContent %}
+{% block resourcesCreatorContentOverride %}
     {% for flashMessage in app.session.flashbag.get('notice') %}
         <div class="flash-notice alert alert-success">
             <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
@@ -31,10 +31,8 @@
     <a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>
     <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
     {% if categoryName is defined %}
-        <a type="button" class="btn btn-danger pull-right" href="{{ path(route, {"categoryName": categoryName}) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
+        <a type="button" class="btn btn-danger pull-right" href="{{ path('imagana_resources_creator_categories_deletor', {"paramResourceName": categoryName }) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
     {% endif %}
-
-
 {% endblock %}
 
 {% block javascripts %}

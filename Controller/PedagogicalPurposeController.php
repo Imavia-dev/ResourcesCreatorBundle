@@ -101,14 +101,16 @@ class PedagogicalPurposeController extends Controller {
                 $flashBag,
                 $flashBagContent
             );
-        }
 
-        $result = array(
-            "tab" => "objectifs",
-            "form"=>$form->createView(),
-            "route" => "imagana_resources_creator_pedagogicalpurpose_create",
-            "previousRoute" => "imagana_resources_creator_pedagogicalpurposes_list"
-        );
+            $result = $this->redirect($this->generateUrl('imagana_resources_creator_pedagogicalpurposes_list'));
+        } else {
+            $result = array(
+                "tab" => "objectifs",
+                "form"=>$form->createView(),
+                "route" => "imagana_resources_creator_pedagogicalpurpose_create",
+                "previousRoute" => "imagana_resources_creator_pedagogicalpurposes_list"
+            );
+        }
 
         return $result;
     }
@@ -167,13 +169,13 @@ class PedagogicalPurposeController extends Controller {
             );
         }
 
-        $result = array(
-            "tab" => "objectifs",
-            "form"=>$form->createView(),
-            "route" => "imagana_resources_creator_pedagogicalpurpose_edit",
-            "previousRoute" => "imagana_resources_creator_pedagogicalpurposes_list",
-            "pedagogicalPurposeDescription" => $pedagogicalPurposeDescription
-        );
+            $result = array(
+                "tab" => "objectifs",
+                "form"=>$form->createView(),
+                "route" => "imagana_resources_creator_pedagogicalpurpose_edit",
+                "previousRoute" => "imagana_resources_creator_pedagogicalpurposes_list",
+                "pedagogicalPurposeDescription" => $pedagogicalPurposeDescription
+            );
 
         return $result ;
     }
@@ -222,6 +224,61 @@ class PedagogicalPurposeController extends Controller {
 
             return $result;
         }
+    }
+
+    /**
+     * @Route(
+     *     "/objectif_pedagogique/supprimer/{paramResourceName}",
+     *     name="imagana_resources_creator_pedagogicalpurposes_deletor"
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::deletor.html.twig")
+     *
+     */
+    public function pedagogicalPurposeDeletorAction(Request $request, $paramResourceName) {
+
+        $result = array(
+            "previousRoute" => "imagana_resources_creator_module_edit",
+            "previousRouteParam" => $paramResourceName,
+        );
+
+        if ($request->getMethod() == 'POST') {
+            $flashBag="notice" ;
+
+            // Récupération des paramètres du formulaires
+            $parameters = $request->request->all();
+
+            $confirmInput = $parameters['deleteConfirm'];
+
+            if($confirmInput == $paramResourceName) {
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
+                $pedagogicalPurposeRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:PedagogicalPurpose');
+                $pedagogicalPurposeToDelete = $pedagogicalPurposeRepository->getPedagogicalPurposeByDescription($paramResourceName);
+
+                if($pedagogicalPurposeToDelete != null) {
+                    $pedagogicalPurposeToDelete->setIsactive(false);
+                    $dm->persist($pedagogicalPurposeToDelete);
+                    $dm->flush($pedagogicalPurposeToDelete);
+
+                    $flashBagContent = "L'objectif pédagogique \"" . $paramResourceName . "\" a bien été supprimé";
+
+                    $result = $this->redirect($this->generateUrl('imagana_resources_creator_pedagogicalpurposes_list'));
+                } else {
+                    $flashBag = "error";
+                    $flashBagContent = "L'objectif pédagogique \"" . $paramResourceName . "\" est introuvable";
+                }
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "La saisie du champ de confirmation est incorrecte ! Veuillez recommencer.";
+            }
+
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
+            );
+        }
+
+        return $result;
     }
 
 }

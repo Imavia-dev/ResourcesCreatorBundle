@@ -18,9 +18,18 @@ class LevelRepository  extends DocumentRepository{
         return $this->createQueryBuilder()->field('isActive')->equals(true)->getQuery()->execute();
     }
 
+    public function getAllActiveLevelsExcept($exceptionIdsArray)
+    {
+        return $this->createQueryBuilder()->field('_id')->notIn($exceptionIdsArray)->getQuery()->execute();
+    }
+
     public function getLevelByTechnicalName($technicalName)
     {
         return $this->createQueryBuilder()->field('technicalName')->equals($technicalName)->getQuery()->getSingleResult();
+    }
+
+    public function getAllLevelsByIdsArray($idsArray) {
+        return $this->createQueryBuilder()->field('_id')->in($idsArray)->getQuery()->execute();
     }
 
 }

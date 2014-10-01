@@ -27,6 +27,10 @@
             {{ form_errors(form) }}
             {{ form_end(form) }}
         </div>
+
+        {% if moduleTitle is defined %}
+            {{ render(controller('ImaganaResourcesCreatorBundle:Modules:renderAssociatedResources', {'paramResourceName': moduleTitle })) }}
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -35,8 +39,7 @@
     <a type="button" class="btn btn-default" href="{{ path(previousRoute) }}" ><i class="fa fa-reply"></i> Annuler</a>
 
     {% if moduleTitle is defined %}
-        <a type="button" class="btn btn-warning" href="{{ path('imagana_resources_creator_modules_associator', {"param": moduleTitle}) }}" ><i class="fa fa-plus"></i> Associé des niveaux</a>
-        <a type="button" class="btn btn-danger pull-right" href="" ><i class="fa fa-trash-o"></i> Supprimer</a>
+        <a type="button" class="btn btn-danger pull-right" href="{{ path('imagana_resources_creator_modules_deletor', {"paramResourceName": moduleTitle }) }}" ><i class="fa fa-trash-o"></i> Supprimer</a>
     {% endif %}
 {% endblock %}
 

@@ -1,0 +1,59 @@
+{% extends "ImaganaResourcesCreatorBundle::resourcesCreatorLayout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .page-header {
+            border-bottom: 1px solid #EEEEEE;
+            margin: 0px 0 20px;
+            padding-bottom: 9px;
+        }
+    </style>
+{% endblock %}
+
+{% block panelTitle %}
+    <i class="icon fa fa-cubes"></i> ImaganaResourcesCreator <small>Outil de création de ressources pour Imagana</small>
+{% endblock %}
+
+{% block resourcesCreatorContentOverride %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice alert alert-success">
+            <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-notice alert alert-danger">
+            <i class="icon fa fa-exclamation-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    <div class="page-header">
+        <h3>
+            <i class="fa fa-trash-o"></i> Veuillez confirmer la suppression de "{{ app.request.attributes.get('paramResourceName') }}"
+        </h3>
+    </div>
+    <div class="alert alert-info" role="alert">
+        <i class="fa fa-keyboard-o"></i> Veuillez saisir "{{ app.request.attributes.get('paramResourceName') }}" dans le champ ci-dessous pour confirmer la suppression
+    </div>
+    <form class="form-inline" role="form" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" method="post">
+        <div class="form-group">
+            <label class="sr-only" for="deleteConfirm">Confirmation de suppression</label>
+            <input type="text" name="deleteConfirm" class="form-control" placeholder="Ecrivez {{ app.request.attributes.get('paramResourceName') }}">
+        </div>
+
+        <input type="submit" class="btn btn-danger " value="Supprimer" />
+    </form>
+{% endblock %}
+
+{% block resourcesCreatorContent %}
+
+{% endblock %}
+
+{% block resourcesCreatorButton %}
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute, {"param": previousRouteParam}) }}" ><i class="fa fa-reply"></i> Annuler</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

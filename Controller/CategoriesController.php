@@ -95,11 +95,7 @@ class CategoriesController extends Controller {
 
                 $categoryDescription = $parameters['imagana_resourcescreatorbundle_imaganacategorytype']['description'];
 
-
-
                 $user = $this->container->get('security.context')->getToken()->getUser()->getUsername();
-
-
 
                 $newCategory = new LevelCategory();
                 $newCategory->setDescription($categoryDescription);
@@ -120,14 +116,16 @@ class CategoriesController extends Controller {
                 $flashBag,
                 $flashBagContent
             );
-        }
 
-        $result = array(
-            "tab" => "categories",
-            "form"=>$form->createView(),
-            "route" => "imagana_resources_creator_category_create",
-            "previousRoute" => "imagana_resources_creator_categories_list"
-        );
+            $result = $this->redirect($this->generateUrl('imagana_resources_creator_categories_list'));
+        } else {
+            $result = array(
+                "tab" => "categories",
+                "form"=>$form->createView(),
+                "route" => "imagana_resources_creator_category_create",
+                "previousRoute" => "imagana_resources_creator_categories_list"
+            );
+        }
 
         return $result;
     }
@@ -194,20 +192,57 @@ class CategoriesController extends Controller {
 
     /**
      * @Route(
-     *     "/categorie/supprimer/{categoryName}",
-     *     name="imagana_resources_creator_category_delete",
+     *     "/categorie/supprimer/{paramResourceName}",
+     *     name="imagana_resources_creator_categories_deletor"
      * )
      * @Method({"GET", "POST"})
-     * @Template("ImaganaResourcesCreatorBundle::categoryManaging.html.twig")
+     * @Template("ImaganaResourcesCreatorBundle::deletor.html.twig")
      *
      */
-    public function categoryDelete(Request $request, $categoryName) {
+    public function levelCategoryDeletorAction(Request $request, $paramResourceName) {
 
-        // @TODO repository function to retrieve the levelCategory
-        // $categoryToDelete = ;
+        $result = array(
+            "previousRoute" => "imagana_resources_creator_module_edit",
+            "previousRouteParam" => $paramResourceName,
+        );
 
+        if ($request->getMethod() == 'POST') {
+            $flashBag="notice" ;
 
-        // @TODO reository function edit all levels with categoryName to ""
+            // Récupération des paramètres du formulaires
+            $parameters = $request->request->all();
+
+            $confirmInput = $parameters['deleteConfirm'];
+
+            if($confirmInput == $paramResourceName) {
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
+                $levelCategoryRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:LevelCategory');
+                $levelCategoryToDelete = $levelCategoryRepository->getCategoryByDescription($paramResourceName);
+
+                if($levelCategoryToDelete != null) {
+                    $levelCategoryToDelete->setIsactive(false);
+                    $dm->persist($levelCategoryToDelete);
+                    $dm->flush($levelCategoryToDelete);
+
+                    $flashBagContent = "Le niveau \"" . $paramResourceName . "\" a bien été supprimé";
+                    $result = $this->redirect($this->generateUrl('imagana_resources_creator_categories_list'));
+                } else {
+                    $flashBag = "error";
+                    $flashBagContent = "Le niveau \"" . $paramResourceName . "\" est introuvable";
+                }
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "La saisie du champ de confirmation est incorrecte ! Veuillez recommencer.";
+            }
+
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
+            );
+        }
+
+        return $result;
     }
+
 
 }

@@ -120,15 +120,16 @@ class LevelsController extends Controller {
                 $flashBag,
                 $flashBagContent
             );
+
+            $result = $this->redirect($this->generateUrl('imagana_resources_creator_levels_list'));
+        } else {
+            $result = array(
+                "tab" => "niveaux",
+                "form"=>$form->createView(),
+                "route" => "imagana_resources_creator_level_create",
+                "previousRoute" => "imagana_resources_creator_levels_list"
+            );
         }
-
-        $result = array(
-            "tab" => "niveaux",
-            "form"=>$form->createView(),
-            "route" => "imagana_resources_creator_level_create",
-            "previousRoute" => "imagana_resources_creator_levels_list"
-        );
-
 
         return $result;
     }
@@ -215,14 +216,16 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveau/liste/association/{levelTechnicalName}",
+     *     "/niveau/liste/association/{paramResourceName}",
      *     name="imagana_resources_creator_levels_associated_resources"
      * )
      * @Method("GET")
      * @Template("ImaganaResourcesCreatorBundle::associatedResources.html.twig")
      */
-    public function renderAssociatedResourcesAction($levelTechnicalName) {
+    public function renderAssociatedResourcesAction($paramResourceName) {
         if ($this->get('security.context')->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+            $levelTechnicalName = $paramResourceName;
 
             $dm = $this->container->get('doctrine_mongodb')->getManager();
 
@@ -251,7 +254,8 @@ class LevelsController extends Controller {
             $result = array(
                 "associatedResources" => $associatedPedagogicalPurposes,
                 "resourceTypeName" => "objectifs pédagogiques",
-                "levelTechnicalName" => $levelTechnicalName
+                "paramResourceName" => $paramResourceName,
+                "associatorRoute" => "imagana_resources_creator_levels_associator"
             );
 
             return $result;
@@ -262,14 +266,16 @@ class LevelsController extends Controller {
 
     /**
      * @Route(
-     *     "/niveau/associer/{levelTechnicalName}/objectifs",
+     *     "/niveau/associer/{paramResourceName}/objectifs",
      *     name="imagana_resources_creator_levels_associator"
      * )
      * @Method({"GET", "POST"})
      * @Template("ImaganaResourcesCreatorBundle::associator.html.twig")
      *
      */
-    public function levelAssociatorAction(Request $request, $levelTechnicalName) {
+    public function levelAssociatorAction(Request $request, $paramResourceName) {
+
+        $levelTechnicalName = $paramResourceName;
 
         $dm = $this->container->get('doctrine_mongodb')->getManager();
 
@@ -328,8 +334,8 @@ class LevelsController extends Controller {
         $result = array(
             "route" => "imagana_resources_creator_levels_associator",
             "previousRoute" => "imagana_resources_creator_level_edit",
-            "previousRouteParamName" => "technicalName",
-            //"previousRouteParam" => $levelTechnicalDescription,
+            "previousRouteParamName" => "param",
+            "previousRouteParam" => $levelTechnicalName,
             "ressources" => "Objectifs pédagogiques",
             "availableResources" => $pedagogicalPurposeCursor,
             "associatedResources" => $associatedPedagogicalPurposes
@@ -337,5 +343,61 @@ class LevelsController extends Controller {
 
         return $result;
     }
+
+    /**
+     * @Route(
+     *     "/niveau/supprimer/{paramResourceName}",
+     *     name="imagana_resources_creator_levels_deletor"
+     * )
+     * @Method({"GET", "POST"})
+     * @Template("ImaganaResourcesCreatorBundle::deletor.html.twig")
+     *
+     */
+    public function levelDeletorAction(Request $request, $paramResourceName) {
+        if ($request->getMethod() == 'POST') {
+            $flashBag="notice" ;
+
+            // Récupération des paramètres du formulaires
+            $parameters = $request->request->all();
+
+            $confirmInput = $parameters['deleteConfirm'];
+
+            if($confirmInput == $paramResourceName) {
+                $dm = $this->container->get('doctrine_mongodb')->getManager();
+                $levelsRepository = $dm->getRepository('ImaganaResourcesCreatorBundle:Level');
+                $levelToDelete = $levelsRepository->getLevelByTechnicalName($paramResourceName);
+
+                if($levelToDelete != null) {
+                    $levelToDelete->setIsactive(false);
+                    $dm->persist($levelToDelete);
+                    $dm->flush($levelToDelete);
+
+                    $flashBagContent = "Le niveau \"" . $paramResourceName . "\" a bien été supprimé";
+                } else {
+                    $flashBag = "error";
+                    $flashBagContent = "Le niveau \"" . $paramResourceName . "\" est introuvable";
+                }
+            } else {
+                $flashBag = "error";
+                $flashBagContent = "La saisie du champ de confirmation est incorrecte ! Veuillez recommencer.";
+            }
+
+            $this->get('session')->getFlashBag()->add(
+                $flashBag,
+                $flashBagContent
+            );
+
+            $result = $this->redirect($this->generateUrl('imagana_resources_creator_levels_list'));
+        } else {
+            $result = array(
+                "previousRoute" => "imagana_resources_creator_level_edit",
+                "previousRouteParam" => $paramResourceName,
+            );
+
+        }
+
+        return $result;
+    }
+
 
 }

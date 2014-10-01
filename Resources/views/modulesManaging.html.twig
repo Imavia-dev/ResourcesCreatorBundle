@@ -5,6 +5,17 @@
 {% endblock %}
 
 {% block resourcesCreatorContent %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice alert alert-success margin-top-md">
+            <i class="icon fa fa-check-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-notice alert alert-danger margin-top-md">
+            <i class="icon fa fa-exclamation-circle"></i> {{ flashMessage }}
+        </div>
+    {% endfor %}
     {% if modules is defined and modules is not empty %}
     <table class="table table-condensed table-hover">
         <thead>

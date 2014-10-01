@@ -11,24 +11,14 @@
             cursor: pointer;
         }
 
-        .removeItems {
-        {#color: #D9534F;#}
-        }
-
-        .removeItems:hover {
-        {#color: #C9302C;#}
-        }
-
-        .addItems {
-        {#color: #5CB85C;#}
-        }
-
-        .addItems:hover {
-        {#color: #449D44;#}
-        }
-
         #formResourcesCreatorContent {
             display: none;
+        }
+
+        .page-header {
+            border-bottom: 1px solid #EEEEEE;
+            margin: 0px 0 20px;
+            padding-bottom: 9px;
         }
     </style>
 {% endblock %}
@@ -38,6 +28,13 @@
 {% endblock %}
 
 {% block resourcesCreatorContentOverride %}
+
+    <div class="page-header">
+        <h2>
+            {{ app.request.attributes.get('paramResourceName') | capitalize }}
+            <small>modification des {{ ressources }} associés</small>
+        </h2>
+    </div>
     <div class="col-md-5 ">
         <div class="row">
             <label>{{ ressources | capitalize | default('Ressources') }} disponibles</label>
@@ -60,9 +57,6 @@
     </div>
     <div class="col-md-2">
         <div class="text-center">
-            {#<i class="fa fa-chevron-circle-left fa-2x removeItems"></i>
-            <i class="fa fa-chevron-circle-right fa-2x addItems"></i>#}
-
             <div class="row margin-top-md">
                 <a class="btn btn-success btn-sm addItems" href="" disabled="disabled"><i class="fa fa-share-square-o"></i> Ajouter</a>
             </div>
@@ -101,7 +95,7 @@
 
 {% block resourcesCreatorButton %}
     {#<a type="button" class="btn btn-primary" href="" id="submitForm"><i class="fa fa-check"></i> Valider</a>#}
-    <a type="button" class="btn btn-default" href="" ><i class="fa fa-reply"></i> Annuler</a>
+    <a type="button" class="btn btn-default" href="{{ path(previousRoute, {"param": previousRouteParam}) }}" ><i class="fa fa-reply"></i> Retour</a>
 {% endblock %}
 
 {% block javascripts %}
